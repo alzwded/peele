@@ -7,6 +7,7 @@ use Wx;
 use wxPerl::Constructors;
 
 use UI::Components::FieldEditor;
+use UI::Components::ListEditor;
 
 package MyApp;
 
@@ -42,11 +43,31 @@ sub OnInit {
     });
     $sizer->Add($tedit2, 0, &Wx::wxEXPAND);
 
+    my $lb = UI::Components::ListEditor->new($frame,
+        'Array item',
+        ["element 1", "element 2", "element last"], 
+        sub {
+            print "added item?\n";
+            return $THEVALUE;
+        },
+        sub {
+            my ($d) = @_;
+            print "modified item $d?\n";
+            return $THEVALUE;
+        },
+        sub {
+            my ($d) = @_;
+            return (Wx::MessageBox(
+                'Delete item no. '.($d + 1).'?',
+                'Confirm',
+                &Wx::wxYES_NO,
+                $frame)
+                == &Wx::wxYES);
+        });
+    $sizer->Add($lb, 0, &Wx::wxEXPAND);
+
     $frame->SetSizer($sizer);
     $frame->Show;
-
-    #my $otherFrame = Wx::DemoModules::wxBoxSizer->new();
-    #$otherFrame->Show;
 }
 
 MyApp->new->MainLoop;
