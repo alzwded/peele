@@ -3,6 +3,12 @@ use base qw/Wx::StaticBoxSizer/;
 use Wx;
 use Wx qw/:sizer wxDefaultPosition/;
 
+# ListBox generic component
+# name => the name of the attribute to be displayed
+# initial => the initial list items
+# createFn => lambda() -> string ; the return val will be the ID of the new item
+# editFn => lambda(int) -> string ; edit the item at the index and return the new string that will be displayed in this item's place
+# delFn => lambda(int) -> bool ; return true if the item was deleted
 sub new {
     my( $class, $parent, $name, $initial, $createFn, $editFn, $delFn ) = @_;
     my $self = $class->SUPER::new( 
