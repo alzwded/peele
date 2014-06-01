@@ -1,7 +1,7 @@
 package PluginManager;
 
-our @fplugins = ();
-our @dplugins = ();
+our %fplugins = ();
+our %dplugins = ();
 
 sub load {
     my ($path) = @_;
@@ -29,9 +29,9 @@ sub load {
             print "incompatible interface for $file\n";
             next;
         } elsif($eah == 1) {
-            push @fplugins, $file;
+            $fplugins{$file} = 1;
         } elsif($eah == 2) {
-            push @dplugins, $file;
+            $dplugins{$file} = 1;
         } else {
             print "unexpected return value from which_interface: $eah\n";
         }
