@@ -32,6 +32,8 @@ sub load {
             push @fplugins, $file;
         } elsif($eah == 2) {
             push @dplugins, $file;
+        } else {
+            print "unexpected return value from which_interface: $eah\n";
         }
     }
 }
@@ -42,12 +44,12 @@ sub gather_modules {
 
     opendir A, $path;
     my @all = readdir A;
-    my @files = map { $path."/".$_ ; } grep { $_ =~ m/^.*\.pm$/ ; } grep { -f "$path/$_" ; } @all;
-    my @dirs = grep { -d "$path/$_" } grep { $_ !~ m/^\..*$/ } @all;
+    my @files = grep { $_ =~ m/^.*\.pm$/ ; } grep { -f "$_" ; } map { "$path/$_" ; } @all;
+    my @dirs = grep { -d $_ } map { "$path/$_" } grep { $_ !~ m/^\..*$/ } @all;
     closedir A;
 
     foreach (@dirs) {
-        push @files, gather_modules($path."/".$_);
+        push @files, gather_modules($_);
     }
 
     return @files;
@@ -55,7 +57,7 @@ sub gather_modules {
 
 sub which_interface {
     my ($file) = @_;
-    my $modname = $file."\::";
+    my $modname = $file."\::"; # this is a hash of the things contained in the module
 
     # check for a computational interface
     if(
