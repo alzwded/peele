@@ -19,7 +19,7 @@ sub OnInit {
     my $self = shift;
 
     my $frame = wxPerl::Frame->new(undef, 'A wxPerl Application',
-            style => &Wx::wxMAXIMIZE_BOX | &Wx::wxCLOSE_BOX | &Wx::wxRESIZE_BORDER
+            style => &Wx::wxDEFAULT_FRAME_STYLE | &Wx::wxRESIZE_BORDER
             );
 
     my $sizer = Wx::BoxSizer->new(&Wx::wxVERTICAL);
