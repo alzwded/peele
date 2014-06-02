@@ -10,7 +10,7 @@ sub ShowAbout {
     $info->SetVersion("0.9"); # bogus version; this probably won't be modified for a long time
     $info->SetDescription("Plugin-based Expression Engine within a Lite Environment");
     $info->SetCopyright("(C) 2014 Vlad Mesco");
-    $info->SetWebsite("http://github.com/alzwded/peele");
+    $info->SetWebSite("http://github.com/alzwded/peele");
     $info->SetLicence(
     <<EOT
 Copyright (c) 2014, Vlad Mesco
