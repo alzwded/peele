@@ -43,11 +43,10 @@ EOT
 
 sub ShowHelp {
     -f "help.html" or return;
-    my $f = wxPerl::Dialog->new(undef, 'Peele Help', style => &Wx::wxDEFAULT_FRAME_STYLE | &Wx::wxRESIZE_BORDER);
+    my $f = wxPerl::Frame->new(undef, 'Peele Help', style => &Wx::wxDEFAULT_FRAME_STYLE | &Wx::wxRESIZE_BORDER);
     my $html = Wx::HtmlWindow->new($f);
     $html->LoadFile("help.html");
-    $f->ShowModal();
-    $f->Destroy();
+    $f->Show();
 }
 
 1;
