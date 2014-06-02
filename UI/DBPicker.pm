@@ -3,6 +3,7 @@ use base qw/Wx::BoxSizer/;
 use Wx;
 use Wx qw/:sizer wxDefaultPosition wxDefaultSize/;
 use Core::PluginManager;
+use Wx::Event qw/EVT_BUTTON EVT_KILL_FOCUS EVT_COMBOBOX EVT_TEXT_ENTER EVT_SET_FOCUS/;
 
 # Field generic UI component
 # name => the name to be displayed
@@ -42,6 +43,13 @@ sub new {
 
     Wx::Event::EVT_BUTTON($cfgBtn, -1, sub {
         ... # TODO pop open config window and save config in model
+    });
+
+    Wx::Event::EVT_SET_FOCUS($combo, sub {
+        $combo->Clear();
+        foreach (keys %PluginManager::dplugins) {
+            $combo->Append($_);
+        }
     });
 
     return $self;
