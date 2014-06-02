@@ -30,7 +30,8 @@ sub new {
     my $editBtn = Wx::Button->new($parent, -1, '?', &Wx::wxDefaultPosition, [25, 25]);
 
     Wx::Event::EVT_BUTTON($parent, $addBtn, sub {
-        $list->Append(&{ $createFn });
+        my $s = &{ $createFn };
+        if(defined $s) { $list->Append($s); }
     });
     Wx::Event::EVT_BUTTON($parent, $editBtn, sub {
         my $sel = $list->GetSelection();

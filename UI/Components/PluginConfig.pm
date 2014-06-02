@@ -36,33 +36,9 @@ sub new {
             my $component = UI::Components::ListEditor->new($self, $name, $data->{$key}, 
                 # add
                 sub {
-                    my $davalue;
-
-                    my $f = Wx::Dialog->new($self, -1, 'Add string');
-                    my $s = Wx::BoxSizer->new(&Wx::wxVERTICAL);
-
-                    my $tf = UI::Components::FieldEditor->new($f, 'Value', '', 
-                        sub {
-                            my ($v) = @_;
-                            $davalue = $v;
-                            return $v;
-                        });
-                    $s->Add($tf, 0, &Wx::wxEXPAND);
-
-                    my $s2 = Wx::BoxSizer->new(&Wx::wxHORIZONTAL);
-                    my $ok = Wx::Button->new($f, -1, 'Okay', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
-                    my $cancel = Wx::Button->new($f, -1, 'Cancel', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
-                    $s2->Add($ok, 0, &Wx::wxRIGHT);
-                    $s2->Add($cancel, 0, &Wx::wxRIGHT);
-                    Wx::Event::EVT_BUTTON($ok, -1, sub {
-                        $f->EndModal(&Wx::wxID_OK);
-                    });
-                    Wx::Event::EVT_BUTTON($cancel, -1, sub {
-                        $f->EndModal(&Wx::wxID_CANCEL);
-                    });
-                    $s->Add($s2, 0, &Wx::wxEXPAND);
-
-                    $f->SetSizer($s);
+                    my $davalue = '';
+                    my $f = editor_dialog($self, 'Adding...', \$davalue);
+                    print "val: $davalue\n";
 
                     if($f->ShowModal() == &Wx::wxID_OK) {
                         push $data->{$key}, $davalue;
@@ -70,19 +46,39 @@ sub new {
                         return $davalue;
                     } else {
                         $f->Destroy();
+                        return undef;
                     }
                 },
                 # edit
                 sub {
-                    ...
+                    my ($idx) = @_;
+                    my $davalue = $data->{$key}[$idx];
+                    my $f = editor_dialog($self, 'Adding...', \$davalue);
+                    print "val: $davalue\n";
+
+                    if($f->ShowModal() == &Wx::wxID_OK) {
+                        $data->{$key}[$idx] = $davalue;
+                        $f->Destroy();
+                        return $davalue;
+                    } else {
+                        $f->Destroy();
+                        return $data->{$key}[$idx];
+                    }
                 },
                 # delete
                 sub {
-                    ...
+                    my ($idx) = @_;
+                    my $s = $data->{$key}[$idx];
+                    return (Wx::MessageBox(
+                                "Delete '$s'?",
+                                'Confirm',
+                                &Wx::wxYES_NO,
+                                $frame)
+                            == &Wx::wxYES);
                 });
             $sizer->Add($component, 0, &Wx::wxEXPAND);
         } else {
-            die "field is not in correct format: $type";
+            die "field is not in correct format: ${type}$name";
         }
     }
         
@@ -90,6 +86,39 @@ sub new {
     $self->SetAutoLayout(1);
 
     return $self;
+}
+
+sub editor_dialog {
+    my ($owner, $title, $valueRef) = @_;
+
+    my $f = Wx::Dialog->new($owner, -1, $title);
+    my $s = Wx::BoxSizer->new(&Wx::wxVERTICAL);
+
+    my $tf = UI::Components::FieldEditor->new($f, 'Value', $$valueRef, 
+        sub {
+            my ($v) = @_;
+            $$valueRef = $v;
+            print "$v vs $$valueRef vs $valueRef\n";
+            return $v;
+        });
+    $s->Add($tf, 0, &Wx::wxEXPAND);
+
+    my $s2 = Wx::BoxSizer->new(&Wx::wxHORIZONTAL);
+    my $ok = Wx::Button->new($f, -1, 'Okay', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
+    my $cancel = Wx::Button->new($f, -1, 'Cancel', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
+    $s2->Add($ok, 0, &Wx::wxRIGHT);
+    $s2->Add($cancel, 0, &Wx::wxRIGHT);
+    Wx::Event::EVT_BUTTON($ok, -1, sub {
+            $f->EndModal(&Wx::wxID_OK);
+            });
+    Wx::Event::EVT_BUTTON($cancel, -1, sub {
+            $f->EndModal(&Wx::wxID_CANCEL);
+            });
+    $s->Add($s2, 0, &Wx::wxEXPAND);
+
+    $f->SetSizer($s);
+
+    return $f;
 }
 
 1;
