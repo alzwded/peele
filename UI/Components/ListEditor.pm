@@ -64,4 +64,11 @@ sub Clear {
     $lb->Clear;
 }
 
+sub GetLB {
+    my ($self) = @_;
+    my $lb = $self->GetItem(0)->GetWindow();
+    return $lb;
+
+}
+
 1;

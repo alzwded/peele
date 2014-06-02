@@ -1,5 +1,8 @@
 package UI::PluginSettings;
 
+use warnings;
+use strict;
+
 use Wx;
 use Wx qw/:sizer wxDefaultPosition wxDefaultSize/;
 use base qw/Wx::Dialog/;
@@ -51,7 +54,7 @@ sub new {
                         "Delete '$s'?",
                         'Confirm',
                         &Wx::wxYES_NO,
-                        $frame)
+                        $self)
                     == &Wx::wxYES)
             {
                 splice $model->{pluginPath}, $idx, 1;
@@ -62,7 +65,7 @@ sub new {
         });
     $sizer->Add($pathsBox, 0, &Wx::wxEXPAND);
 
-    my $dbpicker = UI::DBPicker->new($self, \%mockModel);
+    my $dbpicker = UI::DBPicker->new($self, $model);
     $sizer->Add($dbpicker, 0, &Wx::wxEXPAND);
 
     $self->SetSizer($sizer);

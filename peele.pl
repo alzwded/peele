@@ -80,6 +80,8 @@ sub save_model {
 
     my $s = encode_json(\%model);
 
+    print "huh? ".$model{dbCfg}->{plugin}."\n";
+
     print A $s or $ok = 0;
     if(!$ok) {
         print "cannot open $path for writing\n";

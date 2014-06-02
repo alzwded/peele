@@ -76,15 +76,32 @@ sub OnInit {
     $fileMenu->Append($menuIds{open}, "\&Open...");
     EVT_MENU($self, $menuIds{open}, sub {
         # show file dialog
-        ...;
-        my $path;
+        my $fd = Wx::FileDialog->new(undef, 'Open...',, '', '', 'Json data (*.json)|*.json|All files (*.*)|*.*', &Wx::wxFD_OPEN|&Wx::wxFD_FILE_MUST_EXIST);
+        if($fd->ShowModal() == &Wx::wxID_CANCEL) {
+            $fd->Destroy();
+        }
+        # do saving
+        my $path = $fd->GetPath();
+        $fd->Destroy();
         &{ $self->{newmodel} }($path);
+
+        # refresh list view
+        my $lb = $chainList->GetLB();
+        $lb->Clear();
+        foreach (@{ $self->{model}->{chains} }) {
+            $lb->Append($_);
+        }
     });
     $fileMenu->Append($menuIds{save}, "\&Save As...");
     EVT_MENU($self, $menuIds{save}, sub {
         # show file dialog
-        ...;
-        my $path;
+        my $fd = Wx::FileDialog->new(undef, 'Save As...',, '', '', 'Json data (*.json)|*.json', &Wx::wxFD_SAVE|&Wx::wxFD_OVERWRITE_PROMPT);
+        if($fd->ShowModal() == &Wx::wxID_CANCEL) {
+            $fd->Destroy();
+        }
+        # do saving
+        my $path = $fd->GetPath();
+        $fd->Destroy();
         &{ $self->{savemodel} }($path);
     });
     $fileMenu->AppendSeparator();

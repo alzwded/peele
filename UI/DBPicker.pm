@@ -6,7 +6,8 @@ use Core::PluginManager;
 use Wx::Event qw/EVT_BUTTON EVT_KILL_FOCUS EVT_COMBOBOX EVT_TEXT_ENTER EVT_SET_FOCUS/;
 use UI::Components::PluginConfig;
 
-my $x = 1;
+use warnings;
+use strict;
 
 sub new {
     my( $class, $parent, $model ) = @_;
