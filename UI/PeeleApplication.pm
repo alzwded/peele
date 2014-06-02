@@ -39,8 +39,6 @@ sub new {
     my $self = $class->SUPER::new();
     $modelForInit = undef; # XXX
     $self->{model} = $amodel;
-    $self->{newmodel} = $anewModelFn;
-    $self->{savemodel} = $saveModelFn;
     return bless $self, $class;
 }
 
@@ -69,7 +67,7 @@ sub OnInit {
     my $fileMenu = Wx::Menu->new();
     $fileMenu->Append($menuIds{newm}, "\&New");
     EVT_MENU($self, $menuIds{newm}, sub {
-        &{ $self->{newmodel} }();
+        $self->{model}->load();
         $chainList->Clear();
         print "after";
     });
@@ -83,13 +81,16 @@ sub OnInit {
         # do saving
         my $path = $fd->GetPath();
         $fd->Destroy();
-        &{ $self->{newmodel} }($path);
+        $self->{model}->load($path);
 
         # refresh list view
         my $lb = $chainList->GetLB();
         $lb->Clear();
         foreach (@{ $self->{model}->{chains} }) {
             $lb->Append($_);
+        }
+        foreach (@{ $self->{model}->{pluginPath} }) {
+            PluginManager::load($_);
         }
     });
     $fileMenu->Append($menuIds{save}, "\&Save As...");
@@ -102,7 +103,7 @@ sub OnInit {
         # do saving
         my $path = $fd->GetPath();
         $fd->Destroy();
-        &{ $self->{savemodel} }($path);
+        $self->{model}->save($path);
     });
     $fileMenu->AppendSeparator();
     $fileMenu->Append($menuIds{run}, "\&Run");

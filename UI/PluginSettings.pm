@@ -35,7 +35,8 @@ sub new {
         sub {
             my ($idx) = @_;
             my $value = $model->{pluginPath}[$idx];
-            my $f = UI::Components::PluginConfig->editor_dialog('Add...', \$value);
+            print "asd: $value\n";
+            my $f = UI::Components::PluginConfig::editor_dialog('Edit...', \$value);
             if($f->ShowModal() == &Wx::wxID_OK) {
                 $model->{pluginPath}[$idx] = $value;
                 PluginManager::load($value);
