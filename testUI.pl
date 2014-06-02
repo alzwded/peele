@@ -8,6 +8,7 @@ use wxPerl::Constructors;
 
 use UI::Components::FieldEditor;
 use UI::Components::ListEditor;
+use UI::DBPicker;
 
 package MyApp;
 
@@ -15,7 +16,16 @@ use base 'Wx::App';
 
 our $THEVALUE = 1;
 
+my %mockModel = (
+    dbCfg => {
+        plugin => '',
+        config => {},
+    }
+);
+
 sub OnInit {
+    PluginManager::load("./testPlugs");
+
     my $self = shift;
 
     my $frame = wxPerl::Frame->new(undef, 'A wxPerl Application',
@@ -65,6 +75,9 @@ sub OnInit {
                 == &Wx::wxYES);
         });
     $sizer->Add($lb, 0, &Wx::wxEXPAND);
+
+    my $dbpicker = UI::DBPicker->new($frame, \%mockModel);
+    $sizer->Add($dbpicker, 0, &Wx::wxEXPAND);
 
     $frame->SetSizer($sizer);
     $frame->Show;
