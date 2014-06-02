@@ -69,12 +69,18 @@ sub new {
                 sub {
                     my ($idx) = @_;
                     my $s = $data->{$key}[$idx];
-                    return (Wx::MessageBox(
+                    if (Wx::MessageBox(
                                 "Delete '$s'?",
                                 'Confirm',
                                 &Wx::wxYES_NO,
                                 $frame)
-                            == &Wx::wxYES);
+                            == &Wx::wxYES)
+                    {
+                        splice $data->{$key}, $idx, 1;
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 });
             $sizer->Add($component, 0, &Wx::wxEXPAND);
         } else {
