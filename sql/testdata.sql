@@ -27,5 +27,5 @@ INSERT INTO waves
 INSERT INTO lambdas
     (id, rettype)
     VALUES
-    ('l4', 'wave'),
-    ('l5', 'field');
+    ('l4', 'wave', 'f:{"@b":["1","2","3"],"$a":"qwe"}'),
+    ('l5', 'field', 'f:{"@b":["1","2","3"],"$a":"qwe"}');
