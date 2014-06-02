@@ -7,6 +7,7 @@ use Wx::Menu;
 
 use UI::Components::ListEditor;
 use UI::PluginSettings;
+use UI::HelpAbout;
 
 use warnings;
 use strict;
@@ -128,11 +129,11 @@ sub OnInit {
     my $helpMenu  = Wx::Menu->new();
     $helpMenu->Append($menuIds{help}, "\&Help");
     EVT_MENU($self, $menuIds{help}, sub {
-        ...
+        HelpAbout::ShowHelp();
     });
     $helpMenu->Append($menuIds{about}, "\&About");
     EVT_MENU($self, $menuIds{about}, sub {
-        ...
+        HelpAbout::ShowAbout();
     });
 
     my $menubar = Wx::MenuBar->new();

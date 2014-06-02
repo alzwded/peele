@@ -1,3 +1,18 @@
+package HelpAbout;
+
+use Wx;
+use Wx::Html;
+use wxPerl::Constructors;
+
+sub ShowAbout {
+    my $info = Wx::AboutDialogInfo->new();
+    $info->SetName("Peele");
+    $info->SetVersion("0.9"); # bogus version; this probably won't be modified for a long time
+    $info->SetDescription("Plugin-based Expression Engine within a Lite Environment");
+    $info->SetCopyright("(C) 2014 Vlad Mesco");
+    $info->SetWebsite("http://github.com/alzwded/peele");
+    $info->SetLicence(
+    <<EOT
 Copyright (c) 2014, Vlad Mesco
 All rights reserved.
 
@@ -21,3 +36,18 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+EOT
+    );
+    Wx::AboutBox($info);
+}
+
+sub ShowHelp {
+    -f "help.html" or return;
+    my $f = wxPerl::Dialog->new(undef, 'Peele Help', style => &Wx::wxDEFAULT_FRAME_STYLE | &Wx::wxRESIZE_BORDER);
+    my $html = Wx::HtmlWindow->new($f);
+    $html->LoadFile("help.html");
+    $f->ShowModal();
+    $f->Destroy();
+}
+
+1;
