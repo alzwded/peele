@@ -18,8 +18,7 @@ sub new {
     $self->Add($label, 1, &Wx::wxALL | &Wx::wxALIGN_CENTER_VERTICAL, 5);
 
     my @initial = (keys %PluginManager::dplugins) or ();
-    print $initial[0];
-    my $combo = Wx::ComboBox->new($parent, -1, '', &Wx::wxDefaultPosition, [-1, -1], 
+    my $combo = Wx::ComboBox->new($parent, -1, $model->{dbCfg}->{plugin}, &Wx::wxDefaultPosition, [-1, -1], 
         \@initial,
         &Wx::wxTE_PROCESS_ENTER);
     $self->Add($combo, 1, &Wx::wxALL, 5);

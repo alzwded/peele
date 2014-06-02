@@ -18,7 +18,7 @@ our $THEVALUE = 1;
 
 my %mockModel = (
     dbCfg => {
-        plugin => '',
+        plugin => 'dbThing',
         config => {},
     }
 );
