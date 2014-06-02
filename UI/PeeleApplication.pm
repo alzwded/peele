@@ -32,12 +32,13 @@ our %menuIds = (
 my $modelForInit;
 
 sub new {
-    my ($class, $amodel, $anewModelFn) = @_;
+    my ($class, $amodel, $anewModelFn, $saveModelFn) = @_;
     $modelForInit = $amodel; # XXX OnInit is a method and not an asynchronous event *rolls eyes*
     my $self = $class->SUPER::new();
     $modelForInit = undef; # XXX
     $self->{model} = $amodel;
     $self->{newmodel} = $anewModelFn;
+    $self->{savemodel} = $saveModelFn;
     return bless $self, $class;
 }
 
@@ -71,26 +72,65 @@ sub OnInit {
         print "after";
     });
     $fileMenu->Append($menuIds{open}, "\&Open...");
+    EVT_MENU($self, $menuIds{open}, sub {
+        # show file dialog
+        ...;
+        my $path;
+        &{ $self->{newmodel} }($path);
+    });
     $fileMenu->Append($menuIds{save}, "\&Save As...");
+    EVT_MENU($self, $menuIds{save}, sub {
+        # show file dialog
+        ...;
+        my $path;
+        &{ $self->{savemodel} }($path);
+    });
     $fileMenu->AppendSeparator();
     $fileMenu->Append($menuIds{run}, "\&Run");
+    EVT_MENU($self, $menuIds{run}, sub {
+        ...
+    });
     $fileMenu->Append($menuIds{results}, "\&View Results...");
+    EVT_MENU($self, $menuIds{results}, sub {
+        ...
+    });
     $fileMenu->AppendSeparator();
     $fileMenu->Append($menuIds{exit}, "E\&xit");
     EVT_MENU($self, $menuIds{exit}, sub {$_[0]->Close(1)});
 
     my $editMenu  = Wx::Menu->new();
     $editMenu->Append($menuIds{addChain}, "\&Add Chain...");
+    EVT_MENU($self, $menuIds{addChain}, sub {
+        ...
+    });
     $editMenu->Append($menuIds{editChain}, "\&Edit Chain...");
+    EVT_MENU($self, $menuIds{editChain}, sub {
+        ...
+    });
     $editMenu->Append($menuIds{removeChain}, "\&Remove Chain");
+    EVT_MENU($self, $menuIds{removeChain}, sub {
+        ...
+    });
     $editMenu->AppendSeparator();
     $editMenu->Append($menuIds{clearDb}, "Clear Database");
+    EVT_MENU($self, $menuIds{clearDb}, sub {
+        ...
+    });
     $editMenu->AppendSeparator();
     $editMenu->Append($menuIds{plugins}, "Plugins \&Settings...");
+    EVT_MENU($self, $menuIds{plugins}, sub {
+        ...
+    });
 
     my $helpMenu  = Wx::Menu->new();
     $helpMenu->Append($menuIds{help}, "\&Help");
+    EVT_MENU($self, $menuIds{help}, sub {
+        ...
+    });
     $helpMenu->Append($menuIds{about}, "\&About");
+    EVT_MENU($self, $menuIds{about}, sub {
+        ...
+    });
 
     my $menubar = Wx::MenuBar->new();
     $menubar->Append($fileMenu, "\&File");
