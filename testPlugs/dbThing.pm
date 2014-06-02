@@ -3,6 +3,7 @@ package dbThing;
 sub configure {}
 sub open { print "dbThing opened\n"; }
 sub close {}
+sub query {}
 sub default_parameters {
     return (
         '$a' => 42,

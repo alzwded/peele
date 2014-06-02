@@ -13,5 +13,64 @@
         <li>wxPerl</li>
         <li>Wx::Html</li>
         <li>Wx::HtmlWindow</li>
+        <li>DBI</li>
+        <li>DBD::SQLite</li>
     </ul>
+    <h2>Plugin interfaces</h2>
+    <h3>Expression Plugins</h3>
+    <table border="1">
+        <thead>
+            <td><b>function</b></td>
+            <td><b>form</b></td>
+            <td><b>description</b></td>
+        </thead>
+        <tr>
+            <td>new</td>
+            <td>new(cfg) &rarr; function</td>
+            <td>factory that returns a configured applyable <em>function</em></td>
+        </tr>
+        <tr>
+            <td>apply</td>
+            <td>function::apply(x) &rarr; y</td>
+            <td>apply the function to <em>x</em> and yield the result; result can be a scalar, an array or a lambda</td>
+        </tr>
+        <tr>
+            <td>default_parameters</td>
+            <td>default_parameters &rarr; hash</td>
+            <td>returns a plugin specific configuration <em>hash</em>; the format of a hash is <pre>{ $aScalarValue =&rarr; 42, @anArray =&rarr; [1, 2, 3] }</pre></td>
+        </tr>
+    </table>
+    <h3>DB Drivers</h3>
+    <table border="1">
+        <thead>
+            <td><b>function</b></td>
+            <td><b>form</b></td>
+            <td><b>description</b></td>
+        </thead>
+        <tr>
+            <td>configure</td>
+            <td>new(cfg) &rarr; </td>
+            <td>apply the given configuration to the driver</td>
+        </tr>
+        <tr>
+            <td>open</td>
+            <td>open &rarr;</td>
+            <td>open a connection to the database</td>
+        </tr>
+        <tr>
+            <td>close</td>
+            <td>close &rarr;</td>
+            <td>close the connection</td>
+        </tr>
+        <tr>
+            <td>query</td>
+            <td>query(SQL, ...) &rarr; results</td>
+            <td>execute a query; the <em>...</em> are bounded parameters; <em>results</em> is optional and is a hash of array refs</td>
+        </tr>
+        <tr>
+            <td>default_parameters</td>
+            <td>default_parameters &rarr; hash</td>
+            <td>returns a plugin specific configuration <em>hash</em>; the format of a hash is <pre>{ $aScalarValue =&rarr; 42, @anArray =&rarr; [1, 2, 3] }</pre></td>
+        </tr>
+    </table>
 </body>

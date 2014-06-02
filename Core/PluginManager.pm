@@ -71,7 +71,8 @@ sub which_interface {
         defined $modname->{configure} and
         defined $modname->{open} and
         defined $modname->{close} and
-        defined $modname->{default_parameters})
+        defined $modname->{default_parameters} and
+        defined $modname->{query})
     { return 2; }
     return 0;
 }
