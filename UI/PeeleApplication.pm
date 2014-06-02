@@ -6,6 +6,7 @@ use Wx::Event qw/EVT_MENU/;
 use Wx::Menu;
 
 use UI::Components::ListEditor;
+use UI::Components::PluginConfig;
 
 use warnings;
 use strict;
@@ -119,7 +120,17 @@ sub OnInit {
     $editMenu->AppendSeparator();
     $editMenu->Append($menuIds{plugins}, "Plugins \&Settings...");
     EVT_MENU($self, $menuIds{plugins}, sub {
-        ...
+        my %data = (
+            '$a' => "123",
+            '@b' => ["1", "2"],
+        );
+        my $dlg = UI::Components::PluginConfig->new($self, \%data);
+        $dlg->ShowModal();
+        foreach (keys %data) {
+            my $key = $_;
+            print "$key => $data{$key}\n";
+        }
+        $dlg->Destroy();
     });
 
     my $helpMenu  = Wx::Menu->new();
