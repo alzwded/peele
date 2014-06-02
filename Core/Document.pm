@@ -1,4 +1,4 @@
-package Document;
+package Core::Document;
 
 use strict;
 use warnings;

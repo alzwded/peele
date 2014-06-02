@@ -14,14 +14,14 @@ use UI::PeeleApplication;
 use Core::PluginManager;
 use Core::Document;
 
-my $model = Document->new();
+my $model = Core::Document->new();
 
 # TODO cmd line args && set plugin path
 
 # initial load plugins
 foreach (@{ $model->{pluginPath} }) {
-    PluginManager::load($_);
+    Core::PluginManager::load($_);
 }
 
 # present main window && enter loop
-PeeleApplication->new($model)->MainLoop;
+UI::PeeleApplication->new($model)->MainLoop;

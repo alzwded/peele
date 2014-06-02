@@ -16,7 +16,7 @@ sub new {
     my $label = Wx::StaticText->new($parent, -1, 'Database Engine', &Wx::wxDefaultPosition, [-1, -1], 0);
     $self->Add($label, 1, &Wx::wxALL | &Wx::wxALIGN_CENTER_VERTICAL, 5);
 
-    my @initial = (keys %PluginManager::dplugins) or ();
+    my @initial = (keys %Core::PluginManager::dplugins) or ();
     my $combo = Wx::ComboBox->new($parent, -1, $model->{dbCfg}->{plugin}, &Wx::wxDefaultPosition, [-1, -1], 
         \@initial,
         &Wx::wxTE_PROCESS_ENTER);
@@ -28,7 +28,7 @@ sub new {
     my $cb = sub {
         my ($tf, $evt) = @_;
         my $text = $tf->GetValue();
-        if(defined $PluginManager::dplugins{$text}) {
+        if(defined $Core::PluginManager::dplugins{$text}) {
             $model->{dbCfg}->{plugin} = $text;
             %{ $model->{dbCfg}->{config} } = $text->default_parameters();
         } elsif($text ne '') {
@@ -48,7 +48,7 @@ sub new {
 
     Wx::Event::EVT_SET_FOCUS($combo, sub {
         $combo->Clear();
-        foreach (keys %PluginManager::dplugins) {
+        foreach (keys %Core::PluginManager::dplugins) {
             $combo->Append($_);
         }
     });

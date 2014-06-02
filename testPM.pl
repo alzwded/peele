@@ -3,14 +3,14 @@
 use Core::PluginManager;
 
 # it should be possible to call it twice in a row, w/o side effect, as per requirements
-PluginManager::load("./testPlugs/");
-PluginManager::load("./testPlugs/");
+Core::PluginManager::load("./testPlugs/");
+Core::PluginManager::load("./testPlugs/");
 
-foreach (keys %PluginManager::fplugins) {
+foreach (keys %Core::PluginManager::fplugins) {
     my $thing = $_->new();
     $thing->apply();
 }
 
-foreach (keys %PluginManager::dplugins) {
+foreach (keys %Core::PluginManager::dplugins) {
     $_->open();
 }

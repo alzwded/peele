@@ -24,7 +24,7 @@ my %mockModel = (
 );
 
 sub OnInit {
-    PluginManager::load("./testPlugs");
+    Core::PluginManager::load("./testPlugs");
 
     my $self = shift;
 

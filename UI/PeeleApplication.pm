@@ -1,4 +1,4 @@
-package PeeleApplication;
+package UI::PeeleApplication;
 
 use Wx;
 use wxPerl::Constructors;
@@ -90,7 +90,7 @@ sub OnInit {
             $lb->Append($_);
         }
         foreach (@{ $self->{model}->{pluginPath} }) {
-            PluginManager::load($_);
+            Core::PluginManager::load($_);
         }
     });
     $fileMenu->Append($menuIds{save}, "\&Save As...");
@@ -147,11 +147,11 @@ sub OnInit {
     my $helpMenu  = Wx::Menu->new();
     $helpMenu->Append($menuIds{help}, "\&Help");
     EVT_MENU($self, $menuIds{help}, sub {
-        HelpAbout::ShowHelp();
+        UI::HelpAbout::ShowHelp();
     });
     $helpMenu->Append($menuIds{about}, "\&About");
     EVT_MENU($self, $menuIds{about}, sub {
-        HelpAbout::ShowAbout();
+        UI::HelpAbout::ShowAbout();
     });
 
     my $menubar = Wx::MenuBar->new();

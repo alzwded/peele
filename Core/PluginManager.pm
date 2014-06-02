@@ -1,4 +1,4 @@
-package PluginManager;
+package Core::PluginManager;
 
 our %fplugins = ();
 our %dplugins = ();

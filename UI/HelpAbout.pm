@@ -1,4 +1,4 @@
-package HelpAbout;
+package UI::HelpAbout;
 
 use Wx;
 use Wx::Html;
