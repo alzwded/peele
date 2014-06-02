@@ -6,12 +6,8 @@ use Core::PluginManager;
 use Wx::Event qw/EVT_BUTTON EVT_KILL_FOCUS EVT_COMBOBOX EVT_TEXT_ENTER EVT_SET_FOCUS/;
 use UI::Components::PluginConfig;
 
-# Field generic UI component
-# name => the name to be displayed
-# initial => the initial value
-# editFn => lambda(string) -> string ;
-#     called when the value in the text box is changed (focus lost or RET pressed)
-#     the return value will be used as the new display value
+my $x = 1;
+
 sub new {
     my( $class, $parent, $model ) = @_;
     my $self = $class->SUPER::new( &Wx::wxHORIZONTAL );
@@ -33,7 +29,7 @@ sub new {
         my $text = $tf->GetValue();
         if(defined $PluginManager::dplugins{$text}) {
             $model->{dbCfg}->{plugin} = $text;
-            $model->{dbCfg}->{config} = $text->default_parameters();
+            %{ $model->{dbCfg}->{config} } = $text->default_parameters();
         } elsif($text ne '') {
             $tf->SetValue('');
         }

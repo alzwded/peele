@@ -6,12 +6,6 @@ use UI::Components::FieldEditor;
 use UI::Components::ListEditor;
 use Wx::Event qw/EVT_BUTTON/;
 
-# Field generic UI component
-# name => the name to be displayed
-# initial => the initial value
-# editFn => lambda(string) -> string ;
-#     called when the value in the text box is changed (focus lost or RET pressed)
-#     the return value will be used as the new display value
 sub new {
     my( $class, $parent, $data ) = @_;
 
@@ -37,8 +31,7 @@ sub new {
                 # add
                 sub {
                     my $davalue = '';
-                    my $f = editor_dialog($self, 'Adding...', \$davalue);
-                    print "val: $davalue\n";
+                    my $f = editor_dialog('Adding...', \$davalue);
 
                     if($f->ShowModal() == &Wx::wxID_OK) {
                         push $data->{$key}, $davalue;
@@ -53,8 +46,7 @@ sub new {
                 sub {
                     my ($idx) = @_;
                     my $davalue = $data->{$key}[$idx];
-                    my $f = editor_dialog($self, 'Adding...', \$davalue);
-                    print "val: $davalue\n";
+                    my $f = editor_dialog('Adding...', \$davalue);
 
                     if($f->ShowModal() == &Wx::wxID_OK) {
                         $data->{$key}[$idx] = $davalue;
@@ -95,16 +87,15 @@ sub new {
 }
 
 sub editor_dialog {
-    my ($owner, $title, $valueRef) = @_;
+    my ($title, $valueRef) = @_;
 
-    my $f = Wx::Dialog->new($owner, -1, $title);
+    my $f = Wx::Dialog->new(undef, -1, $title);
     my $s = Wx::BoxSizer->new(&Wx::wxVERTICAL);
 
     my $tf = UI::Components::FieldEditor->new($f, 'Value', $$valueRef, 
         sub {
             my ($v) = @_;
             $$valueRef = $v;
-            print "$v vs $$valueRef vs $valueRef\n";
             return $v;
         });
     $s->Add($tf, 0, &Wx::wxEXPAND);
