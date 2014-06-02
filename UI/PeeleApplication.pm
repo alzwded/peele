@@ -28,7 +28,7 @@ our %menuIds = (
     clearDb => 8,
     plugins => 9,
     help => 10,
-    about => 11,
+    about => &Wx::wxID_ABOUT,
 );
 
 my $modelForInit;
@@ -116,7 +116,7 @@ sub OnInit {
     });
     $fileMenu->AppendSeparator();
     $fileMenu->Append($menuIds{exit}, "E\&xit");
-    EVT_MENU($self, $menuIds{exit}, sub {$_[0]->Close(1)});
+    EVT_MENU($self, $menuIds{exit}, sub { $frame->Close(1) });
 
     my $editMenu  = Wx::Menu->new();
     $editMenu->Append($menuIds{addChain}, "\&Add Chain...");

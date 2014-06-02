@@ -101,7 +101,10 @@ sub check {
     my ($self) = @_;
     return ref $self->{pluginPath} eq 'ARRAY'
         && ref $self->{dbCfg} eq 'HASH'
-        && ref $self->{chains} eq 'ARRAY';
+        && ref $self->{chains} eq 'ARRAY'
+        && defined $self->{dbCfg}->{plugin}
+        && defined $self->{dbCfg}->{config}
+        ;
 }
 
 1;
