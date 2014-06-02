@@ -19,7 +19,7 @@ sub new {
     my $list = Wx::ListBox->new($parent, -1,
         &Wx::wxDefaultPosition,
         &Wx::wxDefaultSize,
-        $initial,
+        $initial || [],
         &Wx::wxGROW|&Wx::wxLB_SINGLE);
     $self->Add($list, 1, &Wx::wxALL|&Wx::wxEXPAND, 5);
 
@@ -54,7 +54,13 @@ sub new {
 
     $self->Add($buttonSizer, 0, &Wx::wxALL, 5);
 
-    return $self;
+    return bless $self, $class;
+}
+
+sub Clear {
+    my ($self) = @_;
+    my $lb = $self->GetItem(0)->GetWindow();
+    $lb->Clear;
 }
 
 1;
