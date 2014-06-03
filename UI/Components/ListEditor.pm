@@ -78,12 +78,12 @@ sub GetAddBtn {
 
 sub GetEditBtn {
     my ($self) = @_;
-    return $self->GetItem(1)->GetSizer()->GetItem(1)->GetWindow();
+    return $self->GetItem(1)->GetSizer()->GetItem(2)->GetWindow();
 }
 
 sub GetDelBtn {
     my ($self) = @_;
-    return $self->GetItem(1)->GetSizer()->GetItem(2)->GetWindow();
+    return $self->GetItem(1)->GetSizer()->GetItem(1)->GetWindow();
 }
 
 1;
