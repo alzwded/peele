@@ -82,17 +82,34 @@ sub add_controls {
         $dbVars,
         &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $yCombo, 1, &Wx::wxEXPAND);
+    add_events_for_combo($yCombo, sub {
+        @$func[0] = $yCombo->GetValue();
+        use Data::Dumper;
+        print Dumper($chain);
+    });
+
     my $text = Wx::StaticText->new($sb, -1, '=', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
     $sizer->Insert($idx++, $text, 0, &Wx::wxEXPAND);
 
     my $fCombo = Wx::ComboBox->new($sb, -1, $f, &Wx::wxDefaultPosition, &Wx::wxDefaultSize, $fVars, &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $fCombo, 1, &Wx::wxEXPAND);
+    add_events_for_combo($fCombo, sub {
+        @$func[1] = $fCombo->GetValue();
+        if(defined $Core::PluginManager::fplugins{@$func[1]}) {
+            @$func[2] = @$func[1]->default_parameters();
+        } else {
+            @$func[2] = {};
+        }
+    });
 
     my $fCfgBtn = Wx::Button->new($sb, -1, '?', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Insert($idx++, $fCfgBtn, 0, &Wx::wxEXPAND);
 
     my $xCombo = Wx::ComboBox->new($sb, -1, $x, &Wx::wxDefaultPosition, &Wx::wxDefaultSize, $dbVars, &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $xCombo, 1, &Wx::wxEXPAND);
+    add_events_for_combo($xCombo, sub {
+        @$func[3] = $xCombo->GetValue();
+    });
 
     my $delBtn = Wx::Button->new($sb, -1, '-', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Insert($idx++, $delBtn, 0, &Wx::wxEXPAND);
@@ -126,6 +143,14 @@ sub add_controls {
             }
         }
     });
+}
+
+sub add_events_for_combo {
+    my ($combo, $cb) = @_;
+
+    Wx::Event::EVT_TEXT_ENTER($combo, -1, $cb);
+    Wx::Event::EVT_KILL_FOCUS($combo, $cb);
+    Wx::Event::EVT_COMBOBOX($combo, -1, $cb);
 }
 
 1;
