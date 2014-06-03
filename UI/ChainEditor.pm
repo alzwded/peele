@@ -153,4 +153,18 @@ sub add_events_for_combo {
     Wx::Event::EVT_COMBOBOX($combo, -1, $cb);
 }
 
+sub to_nice_string {
+    my ($chain) = @_;
+    my $len = scalar @$chain;
+    if($len < 1) {
+        return "<empty>";
+    }
+    my $s = @{ @$chain[0] }[0];
+    for(my $i = 1; $i < $len; ++$i) {
+        $s .= " -> ".@{ @$chain[$i] }[1];
+    }
+    $s .= " -> ".@{ @$chain[$len - 1] }[3];
+    return $s;
+}
+
 1;

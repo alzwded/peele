@@ -13,7 +13,7 @@ sub new {
             plugin => '',
             config => {},
         },
-        chains => ['test'],
+        chains => [],
     };
 
     return bless $self, $class;
