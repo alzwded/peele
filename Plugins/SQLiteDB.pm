@@ -47,9 +47,13 @@ sub set {
     my $type = $value{type};
 
     if($type eq 'field') {
+        ...
     } elsif($type eq 'array') {
+        ...
     } elsif($type eq 'wave') {
+        ...
     } elsif($type eq 'lambda') {
+        ...
     } else {
         die "invalid type: $type";
     }
