@@ -48,14 +48,9 @@
             <td><b>description</b></td>
         </thead>
         <tr>
-            <td>configure</td>
-            <td>new(cfg) &rarr; </td>
-            <td>apply the given configuration to the driver</td>
-        </tr>
-        <tr>
             <td>open</td>
-            <td>open &rarr;</td>
-            <td>open a connection to the database</td>
+            <td>open(cfg) &rarr;</td>
+            <td>open a connection to the database and apply the given configuration to the driver</td>
         </tr>
         <tr>
             <td>close</td>
@@ -63,9 +58,14 @@
             <td>close the connection</td>
         </tr>
         <tr>
-            <td>query</td>
-            <td>query(SQL, ...) &rarr; results</td>
-            <td>execute a query; the <em>...</em> are bounded parameters; <em>results</em> is optional and is a hash of array refs</td>
+            <td>get</td>
+            <td>get(name) &rarr; result</td>
+            <td>return the variable with <em>name</em>; The return type is a hash of the form { type, value }, where type is any of { field, array, wave, lambda } and value can be a string, array, wave or lambda hash</td>
+        </tr>
+        <tr>
+            <td>set</td>
+            <td>set(name, value) &rarr; result</td>
+            <td>set the variable with <em>name</em> to <em>value</em> if given; if <em>value</em> is not given, the variable is deleted; <em>value</em> is of the same form as that returned by <em>get</em></td>
         </tr>
         <tr>
             <td>default_parameters</td>
