@@ -84,8 +84,6 @@ sub add_controls {
     $sizer->Insert($idx++, $yCombo, 1, &Wx::wxEXPAND);
     add_events_for_combo($yCombo, sub {
         @$func[0] = $yCombo->GetValue();
-        use Data::Dumper;
-        print Dumper($chain);
     });
 
     my $text = Wx::StaticText->new($sb, -1, '=', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);

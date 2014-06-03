@@ -67,9 +67,6 @@ sub OnInit {
         sub {
             my ($idx) = @_;
             my $chain = @{ $self->{model}->{chains} }[$idx];
-            use Data::Dumper;
-            print Dumper( $self->{model}->{chains} );
-            print Dumper($chain);
             return $self->edit_chain($chain);
         },
         sub {
@@ -170,7 +167,8 @@ sub OnInit {
         $self,
         $menuIds{addChain},
         sub {
-            ...;
+            my $event = Wx::CommandEvent->new(&Wx::wxEVT_COMMAND_BUTTON_CLICKED, $chainList->GetAddBtn()->GetId());
+            Wx::PostEvent($frame, $event);
         }
     );
     $editMenu->Append( $menuIds{editChain}, "\&Edit Chain..." );
@@ -178,7 +176,8 @@ sub OnInit {
         $self,
         $menuIds{editChain},
         sub {
-            ...;
+            my $event = Wx::CommandEvent->new(&Wx::wxEVT_COMMAND_BUTTON_CLICKED, $chainList->GetEditBtn()->GetId());
+            Wx::PostEvent($frame, $event);
         }
     );
     $editMenu->Append( $menuIds{removeChain}, "\&Remove Chain" );
@@ -186,7 +185,8 @@ sub OnInit {
         $self,
         $menuIds{removeChain},
         sub {
-            ...;
+            my $event = Wx::CommandEvent->new(&Wx::wxEVT_COMMAND_BUTTON_CLICKED, $chainList->GetDelBtn()->GetId());
+            Wx::PostEvent($frame, $event);
         }
     );
     $editMenu->AppendSeparator();
@@ -195,7 +195,24 @@ sub OnInit {
         $self,
         $menuIds{clearDb},
         sub {
-            ...;
+            if ( !defined
+                $Core::PluginManager::dplugins{ $self->{model}->{dbCfg}->{plugin} } )
+            {
+                Wx::MessageBox(
+        'Database Engine is not properly configured. Review your settings in Edit/Plugin Settings...',
+                    'Error'
+                );
+                return;
+            }
+            if(Wx::MessageBox( "Are you sure you want to delete all contents of the database? The operation cannot be undone.",
+                    'Confirm', &Wx::wxYES_NO, $frame ) == &Wx::wxYES)
+            {
+                my $db = Core::DBEngine->new( $self->{model}->{dbCfg} );
+                my @vars = @{ $db->get_all() };
+                foreach (@vars) {
+                    $db->set($_, undef);
+                }
+            }
         }
     );
     $editMenu->AppendSeparator();
