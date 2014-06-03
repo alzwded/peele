@@ -68,11 +68,12 @@ sub which_interface {
 
     # check for a DB interface
     if(
-        defined $modname->{configure} and
         defined $modname->{open} and
         defined $modname->{close} and
+        defined $modname->{abort} and
         defined $modname->{default_parameters} and
-        defined $modname->{query})
+        defined $modname->{set} and
+        defined $modname->{get})
     { return 2; }
     return 0;
 }

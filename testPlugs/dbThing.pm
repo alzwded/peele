@@ -1,9 +1,10 @@
 package dbThing;
 
-sub configure {}
 sub open { print "dbThing opened\n"; }
 sub close {}
-sub query {}
+sub abort {}
+sub get {}
+sub set {}
 sub default_parameters {
     return (
         '$a' => 42,
