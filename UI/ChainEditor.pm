@@ -47,13 +47,18 @@ sub new {
 
     my $addBtn = Wx::Button->new($sb, -1, '+', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Add($addBtn, 0, 0);
+    Wx::Event::EVT_BUTTON($addBtn, -1, sub {
+        my $newChain = ['', '', {}, ''];
+        push $chain, $newChain;
+        add_controls($newChain, $chain, (scalar @$chain) - 1, $self, $sb, $sizer, \@dbVars, \@fVars);
+        $sizer->Layout();
+    });
 
     my $idx = 0;
 
-    foreach (@$chain) {
-        my $func = $_;
-        add_controls($func, $idx, $sb, $sizer, \@dbVars, \@fVars);
-        $idx += 1;
+    for(my $idx = 0; $idx < scalar @$chain; ++$idx) {
+        my $func = @$chain[$idx];
+        add_controls($func, $chain, $idx, $self, $sb, $sizer, \@dbVars, \@fVars);
     }
 
     $sb->SetSizer($sizer);
@@ -68,7 +73,7 @@ sub new {
 }
 
 sub add_controls {
-    my ($func, $chainIdx, $sb, $sizer, $dbVars, $fVars) = @_;
+    my ($func, $chain, $chainIdx, $dialog, $sb, $sizer, $dbVars, $fVars) = @_;
     my $idx = (1 + $chainIdx) * 6;
     my ($y, $f, $cfg, $x) = @$func;
 
@@ -76,7 +81,8 @@ sub add_controls {
         $dbVars,
         &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $yCombo, 1, &Wx::wxEXPAND);
-    $sizer->Insert($idx++, Wx::StaticText->new($sb, -1, '=', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0), 0, &Wx::wxEXPAND);
+    my $text = Wx::StaticText->new($sb, -1, '=', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0);
+    $sizer->Insert($idx++, $text, 0, &Wx::wxEXPAND);
 
     my $fCombo = Wx::ComboBox->new($sb, -1, $f, &Wx::wxDefaultPosition, &Wx::wxDefaultSize, $fVars, &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $fCombo, 1, &Wx::wxEXPAND);
@@ -89,6 +95,35 @@ sub add_controls {
 
     my $delBtn = Wx::Button->new($sb, -1, '-', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Insert($idx++, $delBtn, 0, &Wx::wxEXPAND);
+    Wx::Event::EVT_BUTTON($delBtn, -1, sub {
+        if(Wx::MessageBox(
+                "Are you sure you want to delete this element?",
+                'Confirm',
+                &Wx::wxYES_NO,
+                $dialog)
+            == &Wx::wxYES)
+        {
+            $sizer->Hide($yCombo);
+            $sizer->Hide($xCombo);
+            $sizer->Hide($fCombo);
+            $sizer->Hide($fCfgBtn);
+            $sizer->Hide($delBtn);
+            $sizer->Hide($text);
+            $sizer->Remove($yCombo);
+            $sizer->Remove($xCombo);
+            $sizer->Remove($fCombo);
+            $sizer->Remove($fCfgBtn);
+            $sizer->Remove($delBtn);
+            $sizer->Remove($text);
+            $sizer->Layout();
+            for(my $i = 0; $i < scalar @$chain; ++$i) {
+                if($func == @$chain[$i]) {
+                    splice $chain, $i, 1;
+                    last;
+                }
+            }
+        }
+    });
 }
 
 1;
