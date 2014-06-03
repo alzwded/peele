@@ -25,7 +25,7 @@ INSERT INTO waves
     ('w3', 'p2', 0, '42'),
     ('l4', 'plot', 0, '42');
 INSERT INTO lambdas
-    (id, rettype)
+    (id, rettype, value)
     VALUES
-    ('l4', 'wave', 'f:{"@b":["1","2","3"],"$a":"qwe"}'),
-    ('l5', 'field', 'f:{"@b":["1","2","3"],"$a":"qwe"}');
+    ('l4', 'wave', 'f:{"plugin":"a","config":{"@b":["1","2","3"],"$a":"qwe"}}'),
+    ('l5', 'field', 'f:{"plugin":"a","config":{"@b":["1","2","3"],"$a":"qwe"}}');

@@ -189,3 +189,5 @@ sub set_helper {
         die "invalid type: $type";
     }
 }
+
+1;
