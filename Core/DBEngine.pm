@@ -1,13 +1,16 @@
 package Core::DBEngine;
 
+use Core::PluginManager;
+
 use strict;
 use warnings;
 
 sub new {
     my $class = shift;
-    my ($plugin, $dbCfg) = @_;
+    my ($dbCfg) = @_;
+    my $plugin = $dbCfg->{plugin};
     my $self = {
-        plugin => $dbCfg->{plugin},
+        plugin => $plugin,
     };
     $plugin->open($dbCfg->{config});
     return bless $self, $class;
@@ -19,18 +22,21 @@ sub DESTROY {
     $self->{plugin}->close();
 }
 
+use Data::Dumper;
 sub get {
     my ($self, $varName) = @_;
 
-    my %rez = $self->{plugin}->get($varName);
+    my ($defnd, %rez) = $self->{plugin}->get($varName);
 
-    return %rez;
+    return \%rez if $defnd;
+
+    return undef;
 }
 
 sub set {
-    my ($self, $varName, %value) = @_;
+    my ($self, $varName, $value) = @_;
 
-    $self->{plugin}->set($varName, %value);
+    $self->{plugin}->set($varName, $value);
 }
 
 1;

@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+use strict;
 use Core::PluginManager;
 
 # it should be possible to call it twice in a row, w/o side effect, as per requirements

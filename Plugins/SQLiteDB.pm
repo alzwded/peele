@@ -9,13 +9,13 @@ use JSON::PP;
 
 my $dbh = undef;
 my %st = (
-    getAll => "SELECT (id) FROM main ;",
-    getType => "SELECT (stype) FROM main WHERE id = ? ;"
-    getField => "SELECT (value) FROM fields WHERE id = ? ;",
-    getArray => "SELECT (value) FROM arrays WHERE id = ? ORDER BY idx ASC ;"
-    getWave => "SELECT (plotname, value) FROM waves WHERE id = ? ORDER BY plotname, idx ;"
-    getLambdaRT => "SELECT (rettype) FROM lambdas WHERE id = ? ;",
-    getLambdaRef => "SELECT (value) FROM lambdas WHERE id = ? ;",
+    getAll => "SELECT id FROM main ;",
+    getType => "SELECT stype FROM main WHERE id = ? ;",
+    getField => "SELECT value FROM fields WHERE id = ? ;",
+    getArray => "SELECT value FROM arrays WHERE id = ? ORDER BY idx ASC ;",
+    getWave => "SELECT plotname, value FROM waves WHERE id = ? ORDER BY plotname ASC, idx ASC ;",
+    getLambdaRT => "SELECT rettype FROM lambdas WHERE id = ? ;",
+    getLambdaRef => "SELECT value FROM lambdas WHERE id = ? ;",
     zap => "DELETE FROM main WHERE id = ? ;",
     insMain => "INSERT INTO main (id, stype) VALUES (?, ?) ;",
     insField => "INSERT INTO fields (id, value) VALUES (?, ?) ;",
@@ -25,6 +25,12 @@ my %st = (
 );
 my %sth = ();
 
+sub new {
+    my $class = shift;
+    my $self = {};
+    return bless $self;
+}
+
 sub default_parameters {
     return (
         '$dbname' => "./database.sqlite3",
@@ -32,20 +38,22 @@ sub default_parameters {
 }
 
 sub open {
-    my ($config) = @_;
+    my ($self, $config) = @_;
 
     # open connection with config in config
     # open transaction
-
-    $dbh = DBI->connect("dbi:SQLite:dbname=".$config->{dbname}, '', '',
-        { RaiseError => 0, Autocommit => 0 })
+    $dbh = DBI->connect("dbi:SQLite:dbname=".$config->{'$dbname'}, '', '',
+        { AutoCommit => 0 })
         or return;
 
     foreach (keys %st) {
         my $key = $_;
         $sth{$key} = $dbh->prepare($st{$key});
     }
-    $dbh->begin_work();
+
+    my $pragma = $dbh->prepare("PRAGMA foreign_keys = TRUE;");
+    $pragma->execute();
+    $pragma->finish();
 }
 
 sub cleanup {
@@ -79,12 +87,14 @@ sub get_all {
 }
 
 sub get {
-    my ($varName) = @_;
+    my ($self, $varName) = @_;
 
     $sth{getType}->execute($varName);
-    my $type = $sth{getType}->fetchrow()[0];
+    my $type = ($sth{getType}->fetchrow())[0];
+
+    return (undef, ()) if(!defined $type);
     
-    return get_helper($varName, $type);
+    return (1, &get_helper($varName, $type));
 }
 
 sub get_helper {
@@ -92,14 +102,17 @@ sub get_helper {
 
     if($type eq 'field') {
         $sth{getField}->execute($varName);
-        my $value = $sth{getField}->fetchrow[0];
+        my $value = ($sth{getField}->fetchrow())[0];
         return (
             type => 'field',
             value => $value,
         );
     } elsif($type eq 'array') {
         $sth{getArray}->execute($varName);
-        my @value = @{ $sth{getArray}->fetchall_arrayref([0]) };
+        my @value = ();
+        foreach (@{ $sth{getArray}->fetchall_arrayref([0]) }) {
+            push @value, @$_[0];
+        }
         return (
             type => 'array',
             value => \@value,
@@ -109,10 +122,10 @@ sub get_helper {
         my %ret = ();
         while(my $row = $sth{getWave}->fetchrow_hashref()) {
             my ($plotName, $value) = ($row->{plotname}, $row->{value});
-            if(!defined($ret{plotName})) {
-                $ret{plotName} = [];
+            if(!defined($ret{$plotName})) {
+                $ret{$plotName} = [];
             }
-            push $ret{plotName}, $value;
+            push $ret{$plotName}, $value;
         }
         return (
             type => 'wave',
@@ -120,13 +133,13 @@ sub get_helper {
         );
     } elsif($type eq 'lambda') {
         $sth{getLambdaRT}->execute($varName);
-        my $returnType = $sth{getLambdaRT}->fetchrow()[0];
+        my $returnType = ($sth{getLambdaRT}->fetchrow())[0];
 
         $sth{getLambdaRef}->execute($varName);
-        my $payload = decode_json($sth{getLambdaRef}->fetchrow()[0]);
+        my $payload = decode_json(($sth{getLambdaRef}->fetchrow())[0]);
 
-        my $data = get_helper($varName, $returnType);
-        $payload->{return} = $data;
+        my %data = get_helper($varName, $returnType);
+        $payload->{return} = \%data;
 
         return (
             type => 'lambda',
@@ -135,21 +148,19 @@ sub get_helper {
     } else {
         die "invalid type: $type";
     }
-
-    return (
-        type => $type,
-        value => ...,
-    );
 }
 
 sub set {
-    my ($varName, %value) = @_;
+    my ($self, $varName, $value) = @_;
+
+    $sth{zap}->execute($varName);
+
+    return if !defined $value;
 
     my $name = $varName;
-    my $type = $value{type};
-    my $data = $value{value};
+    my $type = $value->{type};
+    my $data = $value->{value};
 
-    $sth{zap}->execute(($name));
     $sth{insMain}->execute(($name, $type));
 
     set_helper($name, $type, $data);
