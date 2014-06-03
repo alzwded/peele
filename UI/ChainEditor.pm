@@ -160,8 +160,8 @@ sub to_nice_string {
         return "<empty>";
     }
     my $s = @{ @$chain[0] }[0];
-    for(my $i = 1; $i < $len; ++$i) {
-        $s .= " -> ".@{ @$chain[$i] }[1];
+    foreach (@$chain) {
+        $s .= " -> ".@{ $_ }[1];
     }
     $s .= " -> ".@{ @$chain[$len - 1] }[3];
     return $s;

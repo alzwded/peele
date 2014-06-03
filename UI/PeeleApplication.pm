@@ -104,7 +104,7 @@ sub OnInit {
                 my $lb = $chainList->GetLB();
                 $lb->Clear();
                 foreach (@{ $self->{model}->{chains} }) {
-                    $lb->Append($_);
+                    $lb->Append(UI::ChainEditor::to_nice_string($_));
                 }
                 foreach (@{ $self->{model}->{pluginPath} }) {
                     Core::PluginManager::load($_);
