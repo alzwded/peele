@@ -52,6 +52,7 @@ sub new {
         push $chain, $newChain;
         add_controls($newChain, $chain, (scalar @$chain) - 1, $self, $sb, $sizer, \@dbVars, \@fVars);
         $sizer->Layout();
+        $sb->FitInside();
     });
 
     my $idx = 0;
@@ -116,6 +117,7 @@ sub add_controls {
             $sizer->Remove($delBtn);
             $sizer->Remove($text);
             $sizer->Layout();
+            $sb->FitInside();
             for(my $i = 0; $i < scalar @$chain; ++$i) {
                 if($func == @$chain[$i]) {
                     splice $chain, $i, 1;
