@@ -24,6 +24,8 @@ testZap();
 sub testGet {
     my $db = Core::DBEngine->new($dbCfg);
     my $v;
+    print "all ";
+    $v = $db->get_all(); print Dumper($v);
     print "f1 ";
     $v = $db->get('f1'); print Dumper($v);
     print "a2 ";

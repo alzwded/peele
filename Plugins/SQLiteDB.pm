@@ -83,7 +83,11 @@ sub abort {
 
 sub get_all {
     $sth{getAll}->execute();
-    return @{ $sth{getAll}->fetchall_arrayref([0]) };
+    my @ret = ();
+    foreach (@{$sth{getAll}->fetchall_arrayref([0])}) {
+        push @ret, @$_[0];
+    }
+    return \@ret;
 }
 
 sub get {

@@ -39,4 +39,10 @@ sub set {
     $self->{plugin}->set($varName, $value);
 }
 
+sub get_all {
+    my ($self) = @_;
+
+    return $self->{plugin}->get_all();
+}
+
 1;
