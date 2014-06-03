@@ -9,6 +9,7 @@ use base qw/Wx::Dialog/;
 use UI::Components::ListEditor;
 use UI::Components::PluginConfig;
 use UI::DBPicker;
+use Core::PluginManager;
 
 sub new {
     my ($class, $parent, $model) = @_;
@@ -23,7 +24,7 @@ sub new {
             my $f = UI::Components::PluginConfig::editor_dialog('Add...', \$value);
             if($f->ShowModal() == &Wx::wxID_OK) {
                 push $model->{pluginPath}, $value;
-                PluginManager::load($value);
+                Core::PluginManager::load($value);
                 $f->Destroy();
                 return $value;
             } else {
