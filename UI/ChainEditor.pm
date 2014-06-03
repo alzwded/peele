@@ -35,11 +35,11 @@ sub new {
     $sizer->Add(Wx::StaticText->new($sb, -1, 'x', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, &Wx::wxALIGN_CENTER_HORIZONTAL), 1, &Wx::wxEXPAND);
     $sizer->Add(Wx::StaticText->new($sb, -1, ')', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, 0), 0, &Wx::wxEXPAND);
 
-    my @dbVars = @{ $db->get_all() };
+    my @dbVars = map { "%$_"; } @{ $db->get_all() };
     my @fVars = keys %Core::PluginManager::fplugins;
     foreach (@dbVars) {
         my $var = $_;
-        my $dbv = $db->get($var);
+        my $dbv = $db->get(substr $var, 1);
         if($dbv->{type} eq 'lambda') {
             push @fVars, $var;
         }
