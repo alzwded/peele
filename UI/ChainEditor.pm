@@ -48,14 +48,13 @@ sub new {
     my $addBtn = Wx::Button->new($sb, -1, '+', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Add($addBtn, 0, 0);
 
-    my $idx = 6;
+    my $idx = 0;
 
     foreach (@$chain) {
         my $func = $_;
         add_controls($func, $idx, $sb, $sizer, \@dbVars, \@fVars);
-        $idx += 6;
+        $idx += 1;
     }
-
 
     $sb->SetSizer($sizer);
     $sb->FitInside();
@@ -69,7 +68,8 @@ sub new {
 }
 
 sub add_controls {
-    my ($func, $idx, $sb, $sizer, $dbVars, $fVars) = @_;
+    my ($func, $chainIdx, $sb, $sizer, $dbVars, $fVars) = @_;
+    my $idx = (1 + $chainIdx) * 6;
     my ($y, $f, $cfg, $x) = @$func;
 
     my $yCombo = Wx::ComboBox->new($sb, -1, $y, &Wx::wxDefaultPosition, &Wx::wxDefaultSize,
