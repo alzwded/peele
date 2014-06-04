@@ -22,8 +22,11 @@ INSERT INTO waves
     (id, plotname, idx, value)
     VALUES
     ('w3', 'p1', 0, '42'),
+    ('w3', 'p1', 1, '41'),
     ('w3', 'p2', 0, '42'),
-    ('l4', 'plot', 0, '42');
+    ('w3', 'p2', 1, '43'),
+    ('l4', 'plot', 0, '42'),
+    ('l4', 'plot', 1, '1');
 INSERT INTO lambdas
     (id, rettype, value)
     VALUES

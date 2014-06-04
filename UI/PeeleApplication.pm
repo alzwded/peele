@@ -9,6 +9,7 @@ use UI::Components::ListEditor;
 use UI::PluginSettings;
 use UI::HelpAbout;
 use UI::ChainEditor;
+use UI::ResultsDisplay;
 use Core::DBEngine;
 
 use warnings;
@@ -154,7 +155,19 @@ sub OnInit {
         $self,
         $menuIds{results},
         sub {
-            ...;
+            if ( !defined
+                $Core::PluginManager::dplugins{ $self->{model}->{dbCfg}->{plugin} } )
+            {
+                Wx::MessageBox(
+        'Database Engine is not properly configured. Review your settings in Edit/Plugin Settings...',
+                    'Error'
+                );
+                return;
+            }
+            my $db = Core::DBEngine->new( $self->{model}->{dbCfg} );
+            my $rd = UI::ResultsDisplay->new( $db );
+            $rd->ShowModal();
+            $rd->Destroy();
         }
     );
     $fileMenu->AppendSeparator();
