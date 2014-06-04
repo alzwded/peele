@@ -74,4 +74,69 @@
             <td>returns a plugin specific configuration <em>hash</em>; the format of a hash is <pre>{ $aScalarValue =&rarr; 42, @anArray =&rarr; [1, 2, 3] }</pre></td>
         </tr>
     </table>
+    <h2>Data format</h2>
+    <p>The data format returned by DB plugins is as follows:</p>
+    <pre>
+field:
+{
+    type =&gt; 'field',
+    value =&gt; 42,
+}
+
+array:
+{
+    type =&gt; 'array',
+    value =&gt; [1, 2, 3],
+}
+
+wave:
+{
+    type =&gt; 'wave',
+    value =&gt; {
+        plot1 =&gt; [1, 2, 3],
+        plotN =&gt; [2, 4, 8],
+    },
+}
+
+lambda:
+{
+    type =&gt; 'lambda',
+    value =&gt; {
+        plugin =&gt; 'pluginName',
+        config =&gt; {
+            '$scalarField' =&gt; 42,
+            '@arrayField' =&gt; [1, 2, 3],
+        },
+        value =&gt; {
+            type =&gt; 'field', # or array, or wave
+            value =&gt; 42, # or [1, 2, 3] or { plot1 =&gt; [1, 2, 3], }
+        },
+    }
+}
+
+in BNF:
+data ::= field | array | wave | lambda ;
+field ::= "{" "type" "=&gt;" "'field'" "," "value" "=&gt;" SCALAR ;
+array ::= "{" "type" "=&gt;" "'array'" "," "value" "=&gt;" ARRAY_REF ;
+wave ::= "{" "type" "=&gt;" "'array'" "," "value" "=&gt;" "{" wave_def "}" ;
+wave_def ::= plot "," | wave_def plot "," ;
+plot ::= STRING&lt;plotname&gt; "=&gt;" ARRAY_REF ;
+lambda ::= "{" "type" "=&gt;" "'array'" ","
+           "value" "=&gt;" "{" lambda_def "}" ;
+lambda_def ::= "plugin" "=&gt;" STRING&lt;pluginname&gt; ","
+               "config" "=&gt;" config_def ","
+               "return" "=&gt;" lambda_return ;
+lambda_return ::= field | array | wave ;
+config_def ::= "{" config_list "}" ;
+config_list ::= config_item | config_list config_item ;
+config_item ::= "$"ID&lt;fieldname&gt; "=&gt;" SCALAR
+            |   "@"ID&lt;fieldname&gt; "=&gt;" ARRAY_REF
+            ;
+
+ID ::= "[^ \t\n\r\0]*" ;
+
+SCALAR ::= /* perl scalar */ ;
+ARRAY_REF ::= /* perl array ref */ ;
+STRING ::= /* perl string */ ;
+    </pre>
 </body>
