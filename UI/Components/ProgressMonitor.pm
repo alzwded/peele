@@ -1,10 +1,7 @@
-package UI::ProgressMonitor;
+package UI::Components::ProgressMonitor;
 
 use Wx;
 use Wx::Event;
-
-use Core::PluginManager;
-use Core::DBEngine;
 
 use base qw/Wx::Dialog/;
 
@@ -16,11 +13,6 @@ use threads::shared;
 
 use warnings;
 use strict;
-
-<<EOT
-yCombo events -> set chain[idx]
-EOT
-;
 
 sub new {
     my ($class) = @_;

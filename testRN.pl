@@ -3,7 +3,7 @@
 package TestRN;
 
 use Wx;
-use UI::ProgressMonitor;
+use UI::Components::ProgressMonitor;
 use Wx::Event;
 
 
@@ -32,7 +32,7 @@ sub OnInit {
     my $f = Wx::Frame->new(undef, -1, 'Progress!', [-1, -1], [-1, -1], &Wx::wxDEFAULT_FRAME_STYLE);
     my $btn = Wx::Button->new($f, -1, 'Click me');
     Wx::Event::EVT_BUTTON($btn, -1, sub {
-        my $pm = UI::ProgressMonitor->new();
+        my $pm = UI::Components::ProgressMonitor->new();
 
         $pm->run(\&task, "message received");
 
