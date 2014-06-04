@@ -27,7 +27,7 @@ sub new {
     $sizer->Add($cancel, 1, &Wx::wxALIGN_RIGHT);
 
     Wx::Event::EVT_BUTTON($cancel, -1, sub {
-        &{ $self->{cancel_clicked} }();
+        &{ $self->{cancel_clicked} }(); # we'll set this later because we don't know enough right now
     });
 
     $self->{update} = sub {
@@ -46,20 +46,24 @@ sub run {
     my $runMe = shift;
     my @params = @_;
 
+    # shared variable; the task should know to stop itself ASAP whenever
+    # this changes to false
     my $running :shared = 1;
 
+    # set cancel-button-clicked callback that captures $running in its closure
     $self->{cancel_clicked} = sub {
         $running = 0;
     };
 
+    # spawn a thread for the task
     my $thrd = threads->create(sub {
-        threads->yield();
-        &{ $runMe }(\$running, $self->{update}, @params);
-        $self->EndModal($running);
+        threads->yield(); # immediately yield because we should really get to $self->ShowModal before the task actually starts; yeah yeah yeah, this is a Doing It Wrong, but it works most of the time;
+        &{ $runMe }(\$running, $self->{update}, @params); # run the task, sending it the stop flag variable, the update routine and any parameters it needs
+        $self->EndModal($running); # close the dialog; this also has the side effect of unblocking the main thread
     });
 
-    $self->ShowModal();
-    $thrd->join();
+    $self->ShowModal(); # wait until someone closes the dialog
+    $thrd->join(); # join the task thread
 }
 
 1;
