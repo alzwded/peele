@@ -1,15 +1,25 @@
 package b;
 
 sub new {
-    my $self = { val => 1 }; bless $self;
-    return $self;
+    my ($class, $cfg) = @_;
+    my $self = { value => $cfg->{value} };
+    return bless $self, $class;
 }
 
 sub apply {
-    my ($self) = @_;
-    print "b $self->{val}\n";
+    my ($self, $x) = @_;
+    if($x->{type} eq 'array') {
+        my @r = map { $_ * $self->{value} } @{ $x->{value} };
+        return \@r;
+    } else {
+        return [];
+    }
 }
 
-sub default_parameters {}
+sub default_parameters {
+    return {
+        '$value' => 1;
+    };
+}
 
 1;
