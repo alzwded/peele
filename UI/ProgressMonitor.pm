@@ -24,7 +24,7 @@ EOT
 
 sub new {
     my ($class) = @_;
-    my $self = $class->SUPER::new(undef, -1, 'Running...', &Wx::wxDefaultPosition, &Wx::wxDefaultSize, &Wx::wxCAPTION|&Wx::wxMINIMIZE_BOX|&Wx::wxSTAY_ON_TOP);
+    my $self = $class->SUPER::new(undef, -1, 'Running...', &Wx::wxDefaultPosition, [-1, 50], &Wx::wxCAPTION|&Wx::wxMINIMIZE_BOX|&Wx::wxSTAY_ON_TOP);
 
     my $sizer = Wx::BoxSizer->new( &Wx::wxVERTICAL );
 
@@ -32,7 +32,7 @@ sub new {
     $sizer->Add($gauge, 1, &Wx::wxEXPAND);
 
     my $cancel = Wx::Button->new($self, -1, 'Cancel');
-    $sizer->Add($cancel, 1, &Wx::wxRIGHT);
+    $sizer->Add($cancel, 1, &Wx::wxALIGN_RIGHT);
 
     Wx::Event::EVT_BUTTON($cancel, -1, sub {
         &{ $self->{cancel_clicked} }();
