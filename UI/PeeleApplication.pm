@@ -6,11 +6,13 @@ use Wx::Event qw/EVT_MENU/;
 use Wx::Menu;
 
 use UI::Components::ListEditor;
+use UI::Components::ProgressMonitor;
 use UI::PluginSettings;
 use UI::HelpAbout;
 use UI::ChainEditor;
 use UI::ResultsDisplay;
 use Core::DBEngine;
+use Core::ExpressionEngine;
 
 use warnings;
 use strict;
@@ -147,7 +149,19 @@ sub OnInit {
         $self,
         $menuIds{run},
         sub {
-            ...;
+            if ( !defined
+                $Core::PluginManager::dplugins{ $self->{model}->{dbCfg}->{plugin} } )
+            {
+                Wx::MessageBox(
+        'Database Engine is not properly configured. Review your settings in Edit/Plugin Settings...',
+                    'Error'
+                );
+                return;
+            }
+
+            my $progMon = UI::Components::ProgressMonitor->new();
+            $progMon->run(\&Core::ExpressionEngine::run_all, $self->{model}->{chains}, $self->{model}->{dbCfg});
+            $progMon->Destroy();
         }
     );
     $fileMenu->Append( $menuIds{results}, "\&View Results..." );

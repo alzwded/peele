@@ -1,18 +1,20 @@
-package a;
+package testb;
 
 sub new {
     my ($class, $cfg) = @_;
-    my $self = { value => $cfg->{value} };
+    my $self = { value => $cfg->{'$value'} };
+    use Data::Dumper;
+    print Dumper $cfg, $self;
     return bless $self, $class;
 }
 
 sub apply {
     my ($self, $x) = @_;
-    if($x->{type} eq 'field') {
-        my @r = ();
-        for(my $i = 0; $i < 10; ++$i) {
-            push @r, $i * $self->{value};
-        }
+    if($x->{type} eq 'array') {
+        use Data::Dumper;
+        print Dumper $x->{value};
+        my @r = map { $_ * $self->{value} } @{ $x->{value} };
+        print Dumper $self, @r;
         return {
             type => 'array',
             value => \@r,
@@ -27,7 +29,7 @@ sub apply {
 
 sub default_parameters {
     return {
-        '$value' => 1;
+        '$value' => 1,
     };
 }
 

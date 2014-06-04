@@ -6,7 +6,7 @@ use warnings;
 use JSON::PP;
 
 sub new {
-    my $class = shift;
+    my ($class, $path) = @_;
     my $self = {
         pluginPath => [ "./Plugins" ],
         dbCfg => {
@@ -15,6 +15,12 @@ sub new {
         },
         chains => [],
     };
+
+    bless $self, $class;
+
+    if(defined $path) {
+        $self->load($path);
+    }
 
     return bless $self, $class;
 }

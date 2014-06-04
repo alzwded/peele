@@ -33,6 +33,8 @@ sub new {
     $self->{update} = sub {
         my ($val) = @_;
 
+        print "received $val\n";
+
         $gauge->SetValue($val);
     };
 
@@ -59,11 +61,12 @@ sub run {
     my $thrd = threads->create(sub {
         threads->yield(); # immediately yield because we should really get to $self->ShowModal before the task actually starts; yeah yeah yeah, this is a Doing It Wrong, but it works most of the time;
         &{ $runMe }(\$running, $self->{update}, @params); # run the task, sending it the stop flag variable, the update routine and any parameters it needs
+        sleep 1;
         $self->EndModal($running); # close the dialog; this also has the side effect of unblocking the main thread
     });
 
     $self->ShowModal(); # wait until someone closes the dialog
-    $thrd->join(); # join the task thread
+    $thrd->join();
 }
 
 1;

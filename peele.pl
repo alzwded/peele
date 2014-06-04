@@ -14,9 +14,12 @@ use UI::PeeleApplication;
 use Core::PluginManager;
 use Core::Document;
 
-my $model = Core::Document->new();
-
 # TODO cmd line args && set plugin path
+
+my ($path) = @ARGV;
+die "invalid path $path" unless !defined($path) || -f $path;
+
+my $model = Core::Document->new($path);
 
 # initial load plugins
 foreach (@{ $model->{pluginPath} }) {

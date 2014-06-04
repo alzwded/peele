@@ -102,6 +102,12 @@ sub add_controls {
 
     my $fCfgBtn = Wx::Button->new($sb, -1, '?', &Wx::wxDefaultPosition, [25, 25]);
     $sizer->Insert($idx++, $fCfgBtn, 0, &Wx::wxEXPAND);
+    Wx::Event::EVT_BUTTON($fCfgBtn, -1, sub {
+        my $data = @$func[2] || {};
+        my $pluginConfiger = UI::Components::PluginConfig->new($sb, $data);
+        $pluginConfiger->ShowModal();
+        $pluginConfiger->Destroy();
+    });
 
     my $xCombo = Wx::ComboBox->new($sb, -1, $x, &Wx::wxDefaultPosition, &Wx::wxDefaultSize, $dbVars, &Wx::wxTE_PROCESS_ENTER);
     $sizer->Insert($idx++, $xCombo, 1, &Wx::wxEXPAND);
@@ -157,11 +163,11 @@ sub to_nice_string {
     if($len < 1) {
         return "<empty>";
     }
-    my $s = @{ @$chain[0] }[0];
+    my $s = @{ @$chain[0] }[3];
     foreach (@$chain) {
         $s .= " -> ".@{ $_ }[1];
     }
-    $s .= " -> ".@{ @$chain[$len - 1] }[3];
+    $s .= " -> ".@{ @$chain[$len - 1] }[0];
     return $s;
 }
 

@@ -2,8 +2,12 @@ package Core::ExpressionEngine;
 
 use Core::DBEngine;
 
+use warnings;
+use strict;
+
 sub run_all {
-    my ($running, $update, $chains, $db) = @_;
+    my ($running, $update, $chains, $dbCfg) = @_;
+    my $db = Core::DBEngine->new($dbCfg);
 
     my $slice = 100 / (scalar @{ $chains });
     my $val = 0;
@@ -15,10 +19,10 @@ sub run_all {
                 $val = $idx * $slice + $slice * $currentVal/ 100;
                 &{ $update }(int($val));
             }, $_, $db)
-            or return;
+            or last;
 
-        &{ $update }(int($idx * $slice)); # account for any round-off errors (i.e. values smaller than 1)
         ++$idx;
+        &{ $update }(int($idx * $slice)); # account for any round-off errors (i.e. values smaller than 1)
 
         last if !$$running;
     }
@@ -27,6 +31,8 @@ sub run_all {
 sub run_chain {
     my ($running, $update, $chain, $db) = @_;
 
+    my $idx = 0;
+    my $total = scalar @{ $chain };
     foreach (@{ $chain }) {
         my ($y, $f, $cfg, $x) = @{ $_ };
 
@@ -77,12 +83,12 @@ sub run_chain {
         }
 
         my $realFunc = $f->new($cfg);
-        my $result = $f->apply($x);
+        my $result = $realFunc->apply($x);
 
         unless(
             ref $result eq 'HASH'
             and defined $result->{type}
-            and $result->{type} =~ m/(field\|array\|wave\|lambda)/
+            and $result->{type} =~ m/(field|array|wave|lambda)/
             and defined $result->{value})
         {
             print "$f returned invalid result\n";
@@ -90,6 +96,8 @@ sub run_chain {
         }
 
         $db->set($y, $result);
+
+        &{ $update }(int(++$idx / $total * 100));
     }
 
     return 1;
