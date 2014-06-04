@@ -10,9 +10,15 @@ sub apply {
     my ($self, $x) = @_;
     if($x->{type} eq 'array') {
         my @r = map { $_ * $self->{value} } @{ $x->{value} };
-        return \@r;
+        return {
+            type => 'array',
+            value => \@r,
+        }
     } else {
-        return [];
+        return {
+            type => 'array',
+            value => [],
+        }
     }
 }
 

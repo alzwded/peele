@@ -13,9 +13,15 @@ sub apply {
         for(my $i = 0; $i < 10; ++$i) {
             push @r, $i * $self->{value};
         }
-        return \@r;
+        return {
+            type => 'array',
+            value => \@r,
+        }
     } else {
-        return [];
+        return {
+            type => 'array',
+            value => [],
+        }
     }
 }
 
