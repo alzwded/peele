@@ -13,7 +13,7 @@ DEPS = ./UI/DBPicker.pm \
 ./README.md \
 ./sql/schema.sql \
 
-$(DISTNAME): $(DEPS)
+$(DISTNAME).txz: $(DEPS)
 	mkdir -p dist
 	tar cv $(DEPS) | tar xv -C dist/
 	mv dist $(DISTNAME)
