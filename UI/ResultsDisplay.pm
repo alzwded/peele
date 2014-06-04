@@ -6,7 +6,7 @@ use Wx::SimplePlotter;
 use Core::PluginManager;
 use Core::DBEngine;
 
-use base qw/Wx::Dialog/;
+use base qw/Wx::Frame/;
 
 use warnings;
 use strict;
@@ -18,7 +18,7 @@ EOT
 
 sub new {
     my ($class, $db) = @_;
-    my $self = $class->SUPER::new(undef, -1, 'Chain', &Wx::wxDefaultPosition, [400, 400], &Wx::wxDEFAULT_DIALOG_STYLE|&Wx::wxRESIZE_BORDER);
+    my $self = $class->SUPER::new(undef, -1, 'Database Variables', &Wx::wxDefaultPosition, [400, 400], &Wx::wxDEFAULT_FRAME_STYLE|&Wx::wxRESIZE_BORDER);
 
     my $sb = Wx::ScrolledWindow->new($self, -1, &Wx::wxDefaultPosition, &Wx::wxDefaultSize, &Wx::wxVSCROLL);
 

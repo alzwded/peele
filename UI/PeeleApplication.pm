@@ -166,8 +166,7 @@ sub OnInit {
             }
             my $db = Core::DBEngine->new( $self->{model}->{dbCfg} );
             my $rd = UI::ResultsDisplay->new( $db );
-            $rd->ShowModal();
-            $rd->Destroy();
+            $rd->Show();
         }
     );
     $fileMenu->AppendSeparator();
