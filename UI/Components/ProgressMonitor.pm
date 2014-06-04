@@ -33,8 +33,6 @@ sub new {
     $self->{update} = sub {
         my ($val) = @_;
 
-        print "received $val\n";
-
         $gauge->SetValue($val);
     };
 
