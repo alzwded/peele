@@ -7,16 +7,35 @@
 <body>
     <h1>Peele</h1>
     <h2>Dependencies</h2>
+    <p>All of the following modules should be installed for proper execution. However, some <i>can</i> be missing as long the functionalities that use them are not executed.</p>
     <ul>
         <li>perl</li>
         <li>Wx</li>
         <li>wxPerl</li>
-        <li>Wx::Html</li>
-        <li>Wx::HtmlWindow</li>
-        <li>Wx::SimplePlotter</li>
-        <li>DBI</li>
-        <li>DBD::SQLite</li>
+        <li>Wx::Html <i><small>(for displaying the Help window)</small></i></li>
+        <li>Wx::HtmlWindow <i><small>(for displaying the Help window)</small></i></li>
+        <li>Wx::SimplePlotter <i><small>(for displaying results)</small></i></li>
+        <li>DBI <i><small>(for the SQLiteDB plugin)</small></i></li>
+        <li>DBD::SQLite <i><small>(for the SQLiteDB plugin)</small></i></li>
     </ul>
+    <h2>Using the chain editor</h2>
+    <p>A chain represents a composition of functions that store all intermediate results</p>
+    <p>The form a function is presented within a chain is <em>y = f{cfg}(x)</em> where <em>y</em> is the variable under which to store the intermediate result, <em>f</em> is the function to apply, <em>cfg</em> is the configuration to use for the plugin where <em>f</em> comes from, and <em>x</em> is the input value</p>
+    <p><em>y</em> must be a variable, i.e. it starts with a <strong>%</strong> seal and it will be saved to the database</p>
+    <p><em>f</em> can be either a plugin name, or a <em>lambda</em> type variable read from the database (which in turn contains a plugin name)</p>
+    <p><em>x</em> can be:
+        <ul>
+            <li>a literal; these start with the <strong>'</strong> seal</li>
+            <li>a glob pattern; these start with the <strong>`</strong> seal and will return an array of file names that match that glob pattern</li>
+            <li>a variable; these start with the <strong>%</strong> seal and are read from the database</li>
+        </ul>
+    </p>
+    <h2>Running and displaying results</h2>
+    <p>You must first configure the database back end as this is used to stored intermediate and final results of computations. You can do this by going to <em>Edit/Plugin Settings...</em> and setting up correct plugin paths, picking a database plugin and configuring it properly</em>
+    <p>Once you have some chains defined in the document and your database plugin is well configured, you can choose <em>File/Run</em> to run the expression engine</p>
+    <p>The expression engine will evaluate all chains in the give order; all variables are read/stored in the database</p>
+    <p>After running an input deck of chains, you can display all the variables stored in the database with <em>File/View Results...</em>. This will display all <em>field</em> values, plot all <em>array</em>s and <em>wave</em>s, and display the <em>result</em> component of a <em>lambda</em></p>
+    <p>You can purge the entire contents of the database using <em>Edit/Clear Database</em></p>
     <h2>Plugin interfaces</h2>
     <h3>Expression Plugins</h3>
     <table border="1">
@@ -139,4 +158,5 @@ SCALAR ::= /* perl scalar */ ;
 ARRAY_REF ::= /* perl array ref */ ;
 STRING ::= /* perl string */ ;
     </pre>
+
 </body>
