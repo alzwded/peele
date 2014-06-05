@@ -239,6 +239,8 @@ sub parse_file {
                 $state = 'initial';
             } else {
                 $dahash->{inher}->{$Rclass} = '';
+                $dahash->{nvirt}->{$Rclass} = 0;
+                $dahash->{nmeth}->{$Rclass} = 0;
                 shift @chars;
                 $state = 'initial';
             }
