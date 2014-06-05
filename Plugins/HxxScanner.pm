@@ -228,9 +228,10 @@ sub compute_stats {
 
         # compute delta
         my $smallSum = 0;
-        my $my = $dahash->{nmeth}->{$key};
+        my $my = $dahash->{nmeth}->{$key} - $dahash->{nvirt}->{$key};
         foreach (@siblings) {
-            $smallSum += abs $my - $dahash->{nmeth}->{$_}
+            my $his = $dahash->{nmeth}->{$_} - $dahash->{nvirt}->{$_};
+            $smallSum += abs $my - $his;
         }
         my $delta = $smallSum / scalar(@siblings);
         $ndeltasum += $delta;
