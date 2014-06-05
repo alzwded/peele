@@ -193,8 +193,26 @@ sub parse_tree_rec {
 
 sub compute_stats {
     my ($dahash) = @_;
+    my $ret = {};
 
-    ...
+    my ($sum, $count) = (0.0, 0.0);
+    foreach (keys %{ $dahash->{nvirt} }) {
+        $sum += $dahash->{nvirt};
+        $count++;
+    }
+    $ret->{nvirt} = $sum / $count;
+
+    # build inheritance tree
+
+    # compute mean hdepth
+
+    # build map of class -> siblings
+    # compute delta
+    # compute mean delta
+
+    ...;
+
+    return $ret;
 }
 
 sub parse_file {
