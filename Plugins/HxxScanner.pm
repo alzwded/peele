@@ -115,8 +115,13 @@ sub parse_revision_log {
 
 sub accumulate_data {
     my ($dir, $commits, $files) = @_;
-    my %hsh = map { ($_ => []) } @{ $files };
-    my $dahash = \%hsh;
+    #my %hsh = map { ($_ => []) } @{ $files };
+    my %result = {
+        hdepth => [],
+        nsiblings => [],
+        dsiblings => [],
+        nvirt => [],
+    };
 
     my $gitdir = quotemeta $dir;
     my $gitcmd = "git --work-tree=$gitdir --git-dir=$gitdir/.git cat-file -p ";
@@ -134,11 +139,19 @@ sub accumulate_data {
 
         #print "  tree is: $tree\n";
 
-        foreach my $key (keys %{ $dahash }) {
-            #print "key: $key\n";
-            push @{ $dahash->{$key} }, '';
-        }
+        my $dahash = {
+            inher => {},
+            nvirt => {},
+            nmeth => {},
+        };
+
         parse_tree_rec($tree, $dir, $gitcmd, $dahash, $files);
+
+        my %stats = %{ compute_stats($dahash) };
+
+        foreach (keys %stats) {
+            push @{ $result{$_} }, $stats{$_};
+        }
     }
 
     return $dahash;
@@ -167,17 +180,108 @@ sub parse_tree_rec {
         }
 
         if(grep { File::Spec->canonpath("$dir/$filename") eq File::Spec->canonpath($_) } @{ $files }) {
-            #print "    found match for $dir/$filename\n";
-            my $fdata = `$gitcmd $sha`;
+            my $lines = `$gitcmd $sha`;
             if($? != 0) {
                 print "git cat-file failed, last instance\n";
                 return undef;
             }
-            @{ $dahash->{"$dir/$filename"} }
-                [ scalar @{ $dahash->{"$dir/$filename"} }
-                    - 1
-                    ]
-                = $fdata;
+
+            parse_file($lines, $dahash);
+        }
+    }
+}
+
+sub compute_stats {
+    my ($dahash) = @_;
+
+    ...
+}
+
+sub parse_file {
+    my ($lines, $dahash) = @_;
+
+    my @chars = split //, $lines;
+
+    my $Rclass = '';
+    my $Rparent = '';
+    my $Rparen = 0;
+    my $state = 'initial';
+    while(scalar @chars) {
+        if($state eq 'initial') {
+            last if(scalar @chars < 5);
+
+            if(join('' => @chars[0..4]) eq 'class') {
+                splice @chars, 0, 5;
+
+                (join '' => @chars) =~ m/^(\s+)([a-zA-Z0-9_]+)/;
+                my $whiteSpace = $1;
+                $Rclass = $2;
+                splice @chars, 0, (length($whiteSpace) + length($Rclass));
+                $state = 'inheritance?';
+            } else {
+                shift @chars;
+            }
+        } elsif($state eq 'inheritance?') {
+            if(join('' => @chars) =~ m/^(\s*:\s*)(public|protected|private)\s+([a-zA-Z0-9_]+)/) {
+                my $ws = $1;
+                $Rparent = $3;
+                splice @chars, 0, (length($ws) + length($Rparent));
+
+                $dahash->{inher}->{$Rclass} = $Rparent;
+                $dahash->{nvirt}->{$Rclass} = 0;
+                $dahash->{nmeth}->{$Rclass} = 0;
+
+                while($chars[0] ne '{') { shift @chars; }
+                shift @chars;
+                $state = 'inclass';
+            } elsif(join('' => @chars) =~ m/^(\s*;)/) {
+                splice @chars, 0, (length($1));
+                $state = 'initial';
+            } else {
+                $dahash->{inher}->{$Rclass} = '';
+                shift @chars;
+                $state = 'initial';
+            }
+        } elsif($state eq 'inclass') {
+            #if(join('' => @chars) =~ m/^(\s*virtual\s+[^{;]*)/) {
+            if(join('' => @chars) =~ m/^(\s*virtual\s+)([a-zA-Z_0-9*&~ \t\n]+\([^)]*\))/) {
+                $dahash->{nvirt}->{$Rclass}++;
+                $dahash->{nmeth}->{$Rclass}++;
+                splice @chars, 0, (length($1) + length($2));
+                #if(substr($1, length($1) - 1) eq '{') {
+                #    $state = 'inmethod';
+                #}
+                next;
+            } elsif(join('' => @chars) =~ m/^(\s*friend\s+[^;]+)/) {
+                splice @chars, 0, length($1);
+                next;
+            } elsif(join('' => @chars) =~ m/^(\s*[a-zA-Z_0-9*&~]+\([^)]*\))/) {
+                print "$1\n";
+                $dahash->{nmeth}->{$Rclass}++;
+                splice @chars, 0, length($1);
+                next;
+            }
+
+            my $char = shift @chars;
+            if($char eq '{') {
+                $state = 'inmethod';
+                next;
+            } elsif($char eq '}') {
+                $state = 'initial';
+                next;
+            }
+        } elsif($state eq 'inmethod') {
+            my $char = shift @chars;
+            if($char eq '{') {
+                ++$Rparen;
+            } elsif($char eq '}') {
+                if($Rparen == 0) {
+                    $state = 'inclass';
+                    next;
+                } else {
+                    --$Rparen;
+                }
+            }
         }
     }
 }
