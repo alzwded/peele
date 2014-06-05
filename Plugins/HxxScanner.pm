@@ -100,7 +100,7 @@ sub parse_revision_log {
         return undef;
     }
 
-    my @lines = split /\n/, $s;
+    my @lines = reverse split /\n/, $s;
 
     my @commits = ();
 
@@ -132,10 +132,10 @@ sub accumulate_data {
         $firstLine =~ m/^tree ([a-f0-9]*)$/;
         my $tree = $1;
 
-        print "  tree is: $tree\n";
+        #print "  tree is: $tree\n";
 
         foreach my $key (keys %{ $dahash }) {
-            print "key: $key\n";
+            #print "key: $key\n";
             push @{ $dahash->{$key} }, '';
         }
         parse_tree_rec($tree, $dir, $gitcmd, $dahash, $files);
@@ -147,9 +147,9 @@ sub accumulate_data {
 sub parse_tree_rec {
     my ($tree, $dir, $gitcmd, $dahash, $files) = @_;
 
-    print "  at tree $tree in dir $dir\n";
+    #print "  at tree $tree in dir $dir\n";
 
-    print "$gitcmd $tree\n";
+    #print "$gitcmd $tree\n";
     my @lines = split /\n/, `$gitcmd $tree`;
     if($? != 0) {
         print "git cat-file failed 151\n";
@@ -159,7 +159,7 @@ sub parse_tree_rec {
     foreach (@lines) {
         $_ =~ m/^[^ ]* ([^ ]*) ([^ \t]*)\s*(.*)$/;
         my ($type, $sha, $filename) = ($1, $2, $3);
-        print "    type=$type;sha=$sha;filename=$filename\n";
+        #print "    type=$type;sha=$sha;filename=$filename\n";
 
         if($type eq 'tree') {
             parse_tree_rec($sha, "$dir/$filename", $gitcmd, $dahash, $files);
@@ -167,7 +167,7 @@ sub parse_tree_rec {
         }
 
         if(grep { File::Spec->canonpath("$dir/$filename") eq File::Spec->canonpath($_) } @{ $files }) {
-            print "    found match for $dir/$filename\n";
+            #print "    found match for $dir/$filename\n";
             my $fdata = `$gitcmd $sha`;
             if($? != 0) {
                 print "git cat-file failed, last instance\n";
