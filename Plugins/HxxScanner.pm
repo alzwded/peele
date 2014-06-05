@@ -116,7 +116,7 @@ sub parse_revision_log {
 sub accumulate_data {
     my ($dir, $commits, $files) = @_;
     #my %hsh = map { ($_ => []) } @{ $files };
-    my %result = {
+    my $result = {
         hdepth => [],
         nsiblings => [],
         dsiblings => [],
@@ -150,11 +150,11 @@ sub accumulate_data {
         my %stats = %{ compute_stats($dahash) };
 
         foreach (keys %stats) {
-            push @{ $result{$_} }, $stats{$_};
+            push @{ $result->{$_} }, $stats{$_};
         }
     }
 
-    return $dahash;
+    return $result;
 }
 
 sub parse_tree_rec {
