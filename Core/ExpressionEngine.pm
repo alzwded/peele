@@ -82,8 +82,17 @@ sub run_chain {
             $y = $1;
         }
 
-        my $realFunc = $f->new($cfg);
-        my $result = $realFunc->apply($x);
+        my $realFunc;
+        my $result;
+
+        eval {
+            $realFunc = $f->new($cfg);
+            $result = $realFunc->apply($x);
+        };
+        if($@) {
+            print "drastic error in plugin $f ($@), aborting\n";
+            return undef;
+        }
 
         unless(
             ref $result eq 'HASH'

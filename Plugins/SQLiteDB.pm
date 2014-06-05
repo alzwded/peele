@@ -48,7 +48,7 @@ sub open {
 
     $dbh->commit(); # get out of transaction
     $dbh->do("PRAGMA foreign_keys = TRUE;");
-    $dbh->begin_work();
+    #$dbh->begin_work(); not needed because the previous do starts a new transaction
 
     foreach (keys %st) {
         my $key = $_;
