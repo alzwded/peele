@@ -205,12 +205,39 @@ sub compute_stats {
     # build inheritance tree
 
     # compute mean hdepth
+    $sum = 0;
+    foreach (%{ $dahash->{inher} }) {
+        my $current = $_;
+        my $h = 0;
+        while(defined $dahash->{inher}->{$current} && $dahash->{inher}->{$current} ne '') {
+            ++$h;
+            $current = $dahash->{inher}->{$current};
+        }
+        $sum += $h;
+    }
+    $ret->{hdepth} = $sum / $count;
 
     # build map of class -> siblings
     # compute delta
     # compute mean delta
+    my ($nsiblingssum, $ndeltasum) = (0, 0);
+    foreach (%{ $dahash->{inher} }) {
+        my $key = $_;
+        my @siblings = grep { $dahash->{inher}->{$key} eq $dahash->{inher}->{$_} } %{ $dahash->{inher} };
+        $nsiblingssum += scalar @siblings;
 
-    ...;
+        # compute delta
+        my $smallSum = 0;
+        my $my = $dahash->{nmeth}->{$key};
+        foreach (@siblings) {
+            $smallSum += abs $my - $dahash->{nmeth}->{$_}
+        }
+        my $delta = $smallSum / scalar(@siblings);
+        $ndeltasum += $delta;
+    }
+
+    $ret->{nsiblings} = $nsiblingssum / $count;
+    $ret->{dsiblings} = $ndeltasum / $count;
 
     return $ret;
 }
@@ -257,6 +284,9 @@ sub parse_file {
                 splice @chars, 0, (length($ws) + length($Rparent));
 
                 $dahash->{inher}->{$Rclass} = $Rparent;
+                unless(defined $dahash->{$Rparent}) {
+                    $dahash->{inher}->{$Rparent} = '';
+                }
                 $dahash->{nvirt}->{$Rclass} = 0;
                 $dahash->{nmeth}->{$Rclass} = 0;
 
