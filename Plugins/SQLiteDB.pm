@@ -46,14 +46,14 @@ sub open {
         { AutoCommit => 0 })
         or return;
 
+    $dbh->commit(); # get out of transaction
+    $dbh->do("PRAGMA foreign_keys = TRUE;");
+    $dbh->begin_work();
+
     foreach (keys %st) {
         my $key = $_;
         $sth{$key} = $dbh->prepare($st{$key});
     }
-
-    my $pragma = $dbh->prepare("PRAGMA foreign_keys = TRUE;");
-    $pragma->execute();
-    $pragma->finish();
 }
 
 sub cleanup {

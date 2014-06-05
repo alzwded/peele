@@ -3,6 +3,12 @@ DEPS = ./UI/DBPicker.pm \
 ./UI/PeeleApplication.pm \
 ./UI/PluginSettings.pm \
 ./UI/ResultsDisplay.pm \
+./UI/HelpAbout.pm \
+./UI/ChainEditor.pm \
+./UI/Components/ListEditor.pm \
+./UI/Components/FieldEditor.pm \
+./UI/Components/PluginConfig.pm \
+./UI/Components/ProgressMonitor.pm \
 ./LICENSE \
 ./help.html \
 ./peele.pl \
@@ -10,6 +16,7 @@ DEPS = ./UI/DBPicker.pm \
 ./Core/Document.pm \
 ./Core/DBEngine.pm \
 ./Core/PluginManager.pm \
+./Plugins/SQLiteDB.pm \
 ./README.md \
 ./sql/schema.sql \
 
