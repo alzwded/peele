@@ -200,6 +200,17 @@ sub compute_stats {
 sub parse_file {
     my ($lines, $dahash) = @_;
 
+    # whatever you do, do not run this parser on a production C++ header, it will fail miserably
+    # you can/cannot parse the following
+    #   single inheritance classes
+    #   classes that do not inherit from anywhere
+    #   forward declarations are correctly ignored
+    #   out-of-class function/method definitions are correctly ignored
+    #   inner classes are not counted correctly
+    #   do not use namespaces
+    #   do not have comments in bad places that contain unfortunate characteres/keywords like: {, class, ;, entire method declarations, etc
+    # if you need to parse C++ nicely, go grab the reference BNF grammar, add actions to the rules and compile that one
+
     my @chars = split //, $lines;
 
     my $Rclass = '';
