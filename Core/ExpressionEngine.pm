@@ -53,7 +53,14 @@ sub run_chain {
             if($x->{type} eq 'lambda') {
                 $x = $x->{value}->{return};
             }
+        } elsif($x =~ m/^'(.*)/) {
+            $x = {
+                type => "field",
+                value => $1,
+            };
         } else {
+            print "WARNING: $x does not have a seal! Treating it as a literal scalar;\n";
+            print "         consider prepending the value with an apostrophe (')\n";
             $x = {
                 type => "field",
                 value => $x,
