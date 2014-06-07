@@ -161,7 +161,7 @@ sub OnInit {
 
             my $progMon = UI::Components::ProgressMonitor->new();
             $progMon->run(\&Core::ExpressionEngine::run_all, $self->{model}->{chains}, $self->{model}->{dbCfg});
-            $progMon->Destroy();
+            #$progMon->Destroy();
         }
     );
     $fileMenu->Append( $menuIds{results}, "\&View Results..." );
