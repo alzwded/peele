@@ -94,7 +94,14 @@ sub add_controls {
     add_events_for_combo($fCombo, sub {
         @$func[1] = $fCombo->GetValue();
         if(defined $Core::PluginManager::fplugins{@$func[1]}) {
-            @$func[2] = @$func[1]->default_parameters();
+            my $somewhatNewCfg = @$func[1]->default_parameters();
+            my $oldCfg = @$func[2];
+            # if cfg's are compatible, DO NOT REMOVE
+            foreach (keys %{ $somewhatNewCfg }) {
+                if(!defined $oldCfg->{$_}) {
+                    @$func[2] = $somewhatNewCfg;
+                }
+            }
         } else {
             @$func[2] = {};
         }
