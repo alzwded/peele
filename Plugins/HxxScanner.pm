@@ -6,7 +6,7 @@ use warnings;
 use File::Spec;
 use Cwd;
 
-my $verbose = undef;
+my $verbose = 1;#undef;
 
 sub new {
     my ($class, $cfg) = @_;
@@ -64,6 +64,8 @@ sub default_parameters {
 sub get_root_tree {
     my ($file) = @_;
 
+    $file = Cwd::realpath($file);
+
     my ($volume, $dirs, $filename) = File::Spec->splitpath($file, 0);
 
     return find_root_tree_rec(File::Spec->catdir(($volume, $dirs)));
@@ -76,6 +78,8 @@ sub find_root_tree_rec {
     if(!defined($dir) || $dir eq '') {
         return undef;
     }
+
+    print "      $dir\n" if defined $verbose;
 
     if(-d File::Spec->catdir(($dir, ".git"))) {
         return File::Spec->canonpath($dir);
@@ -181,7 +185,7 @@ sub parse_tree_rec {
             next;
         }
 
-        if(grep { File::Spec->canonpath("$dir/$filename") eq File::Spec->canonpath($_) } @{ $files }) {
+        if(grep { Cwd::realpath("$dir/$filename") eq Cwd::realpath($_) } @{ $files }) {
             my $lines = `$gitcmd $sha`;
             if($? != 0) {
                 print "git cat-file failed, last instance\n";
@@ -274,6 +278,7 @@ sub parse_file {
     my $state = 'initial';
     while(scalar @chars) {
         if($state eq 'initial') {
+            print "  PARSE: in state initial\n" if defined $verbose;
             last if(scalar @chars < 5);
 
             if(join('' => @chars[0..4]) eq 'class') {
@@ -290,6 +295,7 @@ sub parse_file {
                 shift @chars;
             }
         } elsif($state eq 'inheritance?') {
+            print "  PARSE: in state inheritance?\n" if defined $verbose;
             if(join('' => @chars) =~ m/^(\s*:\s*)(public|protected|private)\s+([a-zA-Z0-9_]+)/) {
                 my $ws = $1;
                 $Rparent = $3;
@@ -318,6 +324,7 @@ sub parse_file {
                 $state = 'initial';
             }
         } elsif($state eq 'inclass') {
+            print "  PARSE: in state inclass\n" if defined $verbose;
             #if(join('' => @chars) =~ m/^(\s*virtual\s+[^{;]*)/) {
             if(join('' => @chars) =~ m/^(\s*virtual\s+)([a-zA-Z_0-9*&~<>\-&^|+\/=! \t\n]+\([^)]*\))/) {
                 $dahash->{nvirt}->{$Rclass}++;
@@ -354,6 +361,7 @@ sub parse_file {
                 next;
             }
         } elsif($state eq 'inmethod') {
+            print "  PARSE: in state inmethod\n" if defined $verbose;
             my $char = shift @chars;
             if($char eq '{') {
                 ++$Rparen;

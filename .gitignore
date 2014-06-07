@@ -21,3 +21,4 @@ nytprof.out
 /dist/
 *.txz
 /log
+/scenarios/testRawData/repo/
