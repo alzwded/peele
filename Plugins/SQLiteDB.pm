@@ -32,9 +32,9 @@ sub new {
 }
 
 sub default_parameters {
-    return (
+    return {
         '$dbname' => "./database.sqlite3",
-    );
+    };
 }
 
 sub open {

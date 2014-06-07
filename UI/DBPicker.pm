@@ -30,12 +30,12 @@ sub new {
         my $text = $tf->GetValue();
         if(defined $Core::PluginManager::dplugins{$text}) {
             $model->{dbCfg}->{plugin} = $text;
-            my $oldCfg = %{ $model->{dbCfg}->{config} };
+            my $oldCfg = $model->{dbCfg}->{config};
             my $somewhatNewCfg = $text->default_parameters();
             # if cfg's are compatible, DO NOT REMOVE
             foreach (keys %{ $somewhatNewCfg }) {
                 if(!defined $oldCfg->{$_}) {
-                    %{ $model->{dbCfg}->{config} } = $somewhatNewCfg;
+                    %{ $model->{dbCfg}->{config} } = %{ $somewhatNewCfg };
                 }
             }
         } elsif($text ne '') {
