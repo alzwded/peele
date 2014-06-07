@@ -1,24 +1,28 @@
 DISTNAME = peele-0.9
-DEPS = ./UI/DBPicker.pm \
+DEPS = \
+./Core/DBEngine.pm \
+./Core/Document.pm \
+./Core/ExpressionEngine.pm \
+./Core/PluginManager.pm \
+./help.html \
+./LICENSE \
+./peele.pl \
+./Plugins/SQLiteDB.pm \
+./Plugins/XCorrel.pm \
+./Plugins/HxxScanner.pm \
+./README.md \
+./sql/schema.sql \
+./UI/ChainEditor.pm \
+./UI/Components/FieldEditor.pm \
+./UI/Components/ListEditor.pm \
+./UI/Components/PluginConfig.pm \
+./UI/Components/ProgressMonitor.pm \
+./UI/DBPicker.pm \
+./UI/HelpAbout.pm \
 ./UI/PeeleApplication.pm \
 ./UI/PluginSettings.pm \
 ./UI/ResultsDisplay.pm \
-./UI/HelpAbout.pm \
-./UI/ChainEditor.pm \
-./UI/Components/ListEditor.pm \
-./UI/Components/FieldEditor.pm \
-./UI/Components/PluginConfig.pm \
-./UI/Components/ProgressMonitor.pm \
-./LICENSE \
-./help.html \
-./peele.pl \
-./Core/ExpressionEngine.pm \
-./Core/Document.pm \
-./Core/DBEngine.pm \
-./Core/PluginManager.pm \
-./Plugins/SQLiteDB.pm \
-./README.md \
-./sql/schema.sql \
+
 
 $(DISTNAME).txz: $(DEPS)
 	mkdir -p dist

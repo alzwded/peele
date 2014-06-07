@@ -20,11 +20,13 @@ sub apply {
         foreach (keys %{ $x->{value} }) {
             my $key = $_;
             ($means->{$key}, $sigmas->{$key}, $cn) = compute_mean($x->{value}->{$key});
-            #$normalized->{$key} = normalize($x->{value}->{$key}, $means->{$key});
             if($cn < $n) { $n = $cn }
         }
-        my $corr = compute_correl($x->{value}, $means, $sigmas, $n);
+        my $corr = compute_correl($x->{value}, $means, $sigmas, $n); # argh, already normalized
 
+        foreach (keys %{ $x->{value} }) {
+            $x->{value}->{$_} = normalize($x->{value}->{$_}, $means->{$_}, $sigmas->{$_});
+        }
         $x->{value}->{correl} = $corr;
 
         return $x;
@@ -62,19 +64,11 @@ sub compute_mean {
 }
 
 sub normalize {
-    my @numbers = @{ $_[0] };
     my $mean = $_[1];
+    my $sigma = $_[2];
+    my @numbers = map { ($_ - $mean) / $sigma } @{ $_[0] };
 
-    my $sum = 0;
-    foreach (@numbers) {
-        $sum += ($_ - $mean) ** 2;
-    }
-
-    my $s = sqrt($sum / @numbers);
-
-    my @ret = map { ($_ - $mean) / $s } @numbers;
-
-    return \@ret;
+    return \@numbers;
 }
 
 sub compute_correl {
