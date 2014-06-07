@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use Plugins::XCorrel;
+use Plugins::Pearson;
 use Plugins::MinMax;
 
 my @a;
@@ -44,6 +45,8 @@ doit(\@a, \@b);
 sub doit {
     my ($a, $b) = @_;
 
+    print "=" x 72 . "\n";
+
     my $f = XCorrel->new({});
     my $y = $f->apply({
         type => 'wave',
@@ -56,9 +59,19 @@ sub doit {
     use Data::Dumper;
     print Dumper $y;
 
-    my $f = MinMax->new({which => 'correl', what => 'min'});
+    my $f = MinMax->new({'$which' => 'correl', '$what' => 'min'});
     print Dumper $f->apply($y);
 
-    my $f = MinMax->new({which => 'correl', what => 'max'});
+    my $f = MinMax->new({'$which' => 'correl', '$what' => 'max'});
     print Dumper $f->apply($y);
+
+    my $g = Pearson->new({});
+    my $coef = $g->apply({
+        type => 'wave',
+        value => {
+            a => $a,
+            b => $b,
+        }
+    });
+    print Dumper $coef;
 }

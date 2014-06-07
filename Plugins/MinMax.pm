@@ -22,7 +22,7 @@ sub apply {
     my ($self, $x) = @_;
     if($x->{type} eq 'wave') {
         my $comparator = $self->get_comparator();
-        my @list = sort { &$comparator($a, $b) } @{ $x->{value}->{$self->{which}} };
+        my @list = sort { &$comparator($a, $b) } @{ $x->{value}->{$self->{'$which'}} };
         return $list[0];
     } elsif($x->{type} eq 'array') {
         my $comparator = $self->get_comparator();
