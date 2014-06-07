@@ -7,9 +7,10 @@ DEPS = \
 ./help.html \
 ./LICENSE \
 ./peele.pl \
+./Plugins/HxxScanner.pm \
+./Plugins/MinMax.pm \
 ./Plugins/SQLiteDB.pm \
 ./Plugins/XCorrel.pm \
-./Plugins/HxxScanner.pm \
 ./README.md \
 ./sql/schema.sql \
 ./UI/ChainEditor.pm \

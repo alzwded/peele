@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use Plugins::XCorrel;
+use Plugins::MinMax;
 
 my @a;
 my @b;
@@ -54,4 +55,10 @@ sub doit {
 
     use Data::Dumper;
     print Dumper $y;
+
+    my $f = MinMax->new({which => 'correl', what => 'min'});
+    print Dumper $f->apply($y);
+
+    my $f = MinMax->new({which => 'correl', what => 'max'});
+    print Dumper $f->apply($y);
 }
