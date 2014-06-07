@@ -22,6 +22,13 @@ sub apply {
     my ($self, $x) = @_;
     if($x->{type} eq 'wave') {
         my $comparator = $self->get_comparator();
+        unless(defined $x->{value}->{$self->{'$which'}}) {
+            print "MinMax: cannot find plot $self->{'$which'}\n";
+            return {
+                type => 'field',
+                value => '',
+            };
+        }
         my @list = sort { &$comparator($a, $b) } @{ $x->{value}->{$self->{'$which'}} };
         return {
             type => 'field',

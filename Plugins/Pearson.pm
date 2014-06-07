@@ -22,6 +22,13 @@ sub apply {
             ($means->{$key}, $sigmas->{$key}, $cn) = compute_mean($x->{value}->{$key});
             if($cn < $n) { $n = $cn }
         }
+        if($n eq 'inf') {
+            print "Pearson: NO INPUT\n";
+            return {
+                type => 'wave',
+                value => {},
+            };
+        }
         my $corr = compute_correl($x->{value}, $means, $sigmas, $n);
 
         return {
