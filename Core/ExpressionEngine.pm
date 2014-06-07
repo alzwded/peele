@@ -82,6 +82,17 @@ sub run_chain {
             $y = $1;
         }
 
+        print "Preparing to evaluate:\n";
+        print "Y = ";
+        use Data::Dumper;
+        print Dumper $y;
+        print "F = ";
+        print Dumper $f;
+        print "CFG = ";
+        print Dumper $cfg;
+        print "X = ";
+        print Dumper $x;
+
         my $realFunc;
         my $result;
 
@@ -95,7 +106,8 @@ sub run_chain {
         }
 
         unless(
-            ref $result eq 'HASH'
+            !defined $result
+            or ref $result eq 'HASH'
             and defined $result->{type}
             and $result->{type} =~ m/(field|array|wave|lambda)/
             and defined $result->{value})
