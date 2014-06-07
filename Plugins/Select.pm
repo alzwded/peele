@@ -95,7 +95,7 @@ sub apply {
             value => {
                 plugin => 'Select',
                 config => $newCfg,
-                value => $return,
+                return => $return,
             },
         };
     }
