@@ -10,10 +10,12 @@ DEPS = \
 ./Plugins/Cleaner.pm \
 ./Plugins/HxxScanner.pm \
 ./Plugins/MinMax.pm \
+./Plugins/Pearson.pm \
 ./Plugins/Select.pm \
 ./Plugins/SQLiteDB.pm \
 ./Plugins/XCorrel.pm \
 ./README.md \
+./scenarios/scenario1.json \
 ./sql/schema.sql \
 ./UI/ChainEditor.pm \
 ./UI/Components/FieldEditor.pm \
