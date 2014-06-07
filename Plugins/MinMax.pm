@@ -7,8 +7,8 @@ sub new {
     my ($class, $cfg) = @_;
     my $self;
     if(ref $cfg ne 'HASH'
-        or !defined $cfg->{which}
-        or !defined $cfg->{what})
+        or !defined $cfg->{'$which'}
+        or !defined $cfg->{'$what'})
     {
         print "MinMax: invalid configuration\n";
         $self = {};
@@ -38,16 +38,16 @@ sub apply {
 
 sub default_parameters {
     return {
-        which => 'plot',
-        what => 'min',
+        '$which' => 'plot',
+        '$what' => 'min',
     };
 }
 
 sub get_comparator {
     my $self = shift;
-    if($self->{what} eq 'min') {
+    if($self->{'$what'} eq 'min') {
         return sub { $_[0] <=> $_[1] };
-    } elsif($self->{what} eq 'max') {
+    } elsif($self->{'$what'} eq 'max') {
         return sub { $_[1] <=> $_[0] };
     }
 }
