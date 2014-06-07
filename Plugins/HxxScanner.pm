@@ -6,6 +6,8 @@ use warnings;
 use File::Spec;
 use Cwd;
 
+my $verbose = undef;
+
 sub new {
     my ($class, $cfg) = @_;
     my $self = {};
@@ -137,7 +139,7 @@ sub accumulate_data {
         $firstLine =~ m/^tree ([a-f0-9]*)$/;
         my $tree = $1;
 
-        #print "  tree is: $tree\n";
+        print "  tree is: $tree\n" if defined $verbose;
 
         my $dahash = {
             inher => {},
@@ -160,9 +162,9 @@ sub accumulate_data {
 sub parse_tree_rec {
     my ($tree, $dir, $gitcmd, $dahash, $files) = @_;
 
-    #print "  at tree $tree in dir $dir\n";
+    print "  at tree $tree in dir $dir\n" if defined $verbose;
 
-    #print "$gitcmd $tree\n";
+    print "$gitcmd $tree\n" if defined $verbose;
     my @lines = split /\n/, `$gitcmd $tree`;
     if($? != 0) {
         print "git cat-file failed 151\n";
@@ -172,7 +174,7 @@ sub parse_tree_rec {
     foreach (@lines) {
         $_ =~ m/^[^ ]* ([^ ]*) ([^ \t]*)\s*(.*)$/;
         my ($type, $sha, $filename) = ($1, $2, $3);
-        #print "    type=$type;sha=$sha;filename=$filename\n";
+        print "    type=$type;sha=$sha;filename=$filename\n" if defined $verbose;
 
         if($type eq 'tree') {
             parse_tree_rec($sha, "$dir/$filename", $gitcmd, $dahash, $files);
@@ -196,8 +198,12 @@ sub compute_stats {
     my $ret = {};
 
     my ($sum, $count) = (0.0, 0.0);
+    use Data::Dumper;
+    print '*' x 20 . "\n" if defined $verbose;
+    print Dumper $dahash if defined $verbose;
+    print '*' x 20 . "\n" if defined $verbose;
     foreach (keys %{ $dahash->{nvirt} }) {
-        $sum += $dahash->{nvirt};
+        $sum += $dahash->{nvirt}->{$_};
         $count++;
     }
     $ret->{nvirt} = $sum / $count;
@@ -220,10 +226,13 @@ sub compute_stats {
     # build map of class -> siblings
     # compute delta
     # compute mean delta
+    use Data::Dumper;
+    print Dumper $dahash if defined $verbose;
     my ($nsiblingssum, $ndeltasum) = (0, 0);
-    foreach (%{ $dahash->{inher} }) {
+    foreach (keys %{ $dahash->{inher} }) {
         my $key = $_;
-        my @siblings = grep { $dahash->{inher}->{$key} eq $dahash->{inher}->{$_} } %{ $dahash->{inher} };
+        print "  $key\n" if defined $verbose;
+        my @siblings = grep { $dahash->{inher}->{$key} eq $dahash->{inher}->{$_} } keys %{ $dahash->{inher} };
         $nsiblingssum += scalar @siblings;
 
         # compute delta
@@ -275,6 +284,8 @@ sub parse_file {
                 $Rclass = $2;
                 splice @chars, 0, (length($whiteSpace) + length($Rclass));
                 $state = 'inheritance?';
+
+                print "found class: $Rclass\n";
             } else {
                 shift @chars;
             }
@@ -297,30 +308,40 @@ sub parse_file {
             } elsif(join('' => @chars) =~ m/^(\s*;)/) {
                 splice @chars, 0, (length($1));
                 $state = 'initial';
-            } else {
+            } elsif(join('' => @chars) =~ m/^(\s*[{])/) {
                 $dahash->{inher}->{$Rclass} = '';
                 $dahash->{nvirt}->{$Rclass} = 0;
                 $dahash->{nmeth}->{$Rclass} = 0;
-                shift @chars;
+                $state = 'inclass';
+                splice @chars, 0, (length($1));
+            } else {
                 $state = 'initial';
             }
         } elsif($state eq 'inclass') {
             #if(join('' => @chars) =~ m/^(\s*virtual\s+[^{;]*)/) {
-            if(join('' => @chars) =~ m/^(\s*virtual\s+)([a-zA-Z_0-9*&~ \t\n]+\([^)]*\))/) {
+            if(join('' => @chars) =~ m/^(\s*virtual\s+)([a-zA-Z_0-9*&~<>\-&^|+\/=! \t\n]+\([^)]*\))/) {
                 $dahash->{nvirt}->{$Rclass}++;
                 $dahash->{nmeth}->{$Rclass}++;
                 splice @chars, 0, (length($1) + length($2));
                 #if(substr($1, length($1) - 1) eq '{') {
                 #    $state = 'inmethod';
                 #}
+                print "$2\n" if defined $verbose;
                 next;
             } elsif(join('' => @chars) =~ m/^(\s*friend\s+[^;]+)/) {
                 splice @chars, 0, length($1);
                 next;
-            } elsif(join('' => @chars) =~ m/^(\s*[a-zA-Z_0-9*&~]+\([^)]*\))/) {
-                print "$1\n";
+            } elsif(join('' => @chars) =~ m/^(\s*[a-zA-Z_0-9*&~<>\-+\/=!|^]+\([^)]*\))/) {
+                print "$1\n" if defined $verbose;
                 $dahash->{nmeth}->{$Rclass}++;
                 splice @chars, 0, length($1);
+
+                if(join('' => @chars) =~ m/^(\s*[:])/) {
+                    if(join('' => @chars) =~ m/^([^;{]*)/) {
+                        splice @chars, 0, length($1);
+                    }
+                }
+
                 next;
             }
 
