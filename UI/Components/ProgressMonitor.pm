@@ -80,7 +80,6 @@ sub run {
 
     # spawn a thread for the task
     my $thrd = threads->create(sub {
-        while(!$canStart) { print "waiting\n"; threads->yield(); }
         threads->yield() while(!$canStart); # immediately yield because we should really get to $self->ShowModal before the task actually starts; yeah yeah yeah, this is a Doing It Wrong, but it works most of the time;
         &{ $runMe }(\$running, $self->{update}, @params); # run the task, sending it the stop flag variable, the update routine and any parameters it needs
         sleep 1;
