@@ -28,6 +28,7 @@ DEPS = \
 ./UI/PluginSettings.pm \
 ./UI/ResultsDisplay.pm \
 
+TMPFILE := $(shell mktemp)
 
 $(DISTNAME).txz: $(DEPS)
 	mkdir -p dist
@@ -36,5 +37,10 @@ $(DISTNAME).txz: $(DEPS)
 	tar cJvf $(DISTNAME).txz $(DEPS)
 	mv $(DISTNAME) dist
 
+sqlSchema.png: sql/schema.sql
+	cat sql/schema.sql | sed -e 's/IF NOT EXISTS //g ; /^PRAGMA/ d' > $(TMPFILE)
+	sqlt-diagram -d SQLite -i png -o sqlSchema.png $(TMPFILE)
+	rm -f $(TMPFILE)
+
 clean:
-	rm -rf dist $(DISTNAME).txz
+	rm -rf dist $(DISTNAME).txz sqlSchema.png
