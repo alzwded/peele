@@ -35,8 +35,6 @@ sub OnInit {
         my $pm = UI::Components::ProgressMonitor->new();
 
         $pm->run(\&task, "message received");
-
-        $pm->Destroy();
     });
 
     $f->Show();
