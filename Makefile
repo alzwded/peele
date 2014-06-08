@@ -39,7 +39,7 @@ $(DISTNAME).txz: $(DEPS)
 
 sqlSchema.png: sql/schema.sql
 	cat sql/schema.sql | sed -e 's/IF NOT EXISTS //g ; /^PRAGMA/ d' > $(TMPFILE)
-	sqlt-diagram -d SQLite -i png -o sqlSchema.png $(TMPFILE)
+	sqlt-diagram -d SQLite -c 2 -t PeeleDB -i png -o sqlSchema.png $(TMPFILE)
 	rm -f $(TMPFILE)
 
 clean:
