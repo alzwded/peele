@@ -42,5 +42,8 @@ sqlSchema.png: sql/schema.sql
 	sqlt-diagram -d SQLite -c 2 -t PeeleDB -i png -o sqlSchema.png $(TMPFILE)
 	rm -f $(TMPFILE)
 
+MASTER.pdf: MASTER.odt
+	soffice --invisible --convert-to pdf MASTER.odt
+
 clean:
 	rm -rf dist $(DISTNAME).txz sqlSchema.png
