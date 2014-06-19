@@ -15,14 +15,14 @@ sub apply {
         my $means = {};
         my $sigmas = {};
         my $normalized = {};
-        my $n = 'inf';
+        my $n = 10.0**23;
         my $cn = undef;
         foreach (keys %{ $x->{value} }) {
             my $key = $_;
             ($means->{$key}, $sigmas->{$key}, $cn) = compute_mean($x->{value}->{$key});
             if($cn < $n) { $n = $cn }
         }
-        if($n eq 'inf') {
+        unless(defined $cn) {
             print "Pearson: NO INPUT\n";
             return {
                 type => 'wave',
