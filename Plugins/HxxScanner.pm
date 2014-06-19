@@ -99,7 +99,6 @@ sub find_root_tree_rec {
 sub parse_revision_log {
     my ($dir) = @_;
 
-    #$dir = quotemeta $dir;
     my $cmd = "git --work-tree=\"$dir\" --git-dir=\"".(File::Spec->catdir($dir, ".git"))."\" log";
     my $s = `$cmd`;
     if($? != 0) {
@@ -130,9 +129,7 @@ sub accumulate_data {
         nvirt => [],
     };
 
-    my $gitdir = quotemeta $dir;
     my $gitcmd = "git --work-tree=\"$dir\" --git-dir=\"".(File::Spec->catdir($dir, ".git"))."\" cat-file -p ";
-    #my $gitcmd = "git --work-tree=$gitdir --git-dir=$gitdir/.git cat-file -p ";
 
     foreach (@{ $commits }) {
         my $commit = $_;
