@@ -34,6 +34,7 @@ sub new {
     Wx::Event::EVT_PAINT($self, sub { # wxGtk has no OnShow ffs
         #print "in onpaint\n";
         &{ $self->{start} }(); 
+        Wx::Event::Skip($_[1]);
     });
 
     $self->{update} = sub {
