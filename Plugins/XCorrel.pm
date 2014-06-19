@@ -67,11 +67,6 @@ sub compute_mean {
     }
     $s /= $nThings;
 
-    use Data::Dumper;
-    print Dumper @numbers;
-    print Dumper $s;
-    print Dumper $nThings;
-
     return ($sum, sqrt($s), $nThings);
 }
 
