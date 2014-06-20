@@ -55,19 +55,30 @@ sub new {
     });
 
     Wx::Event::EVT_SET_FOCUS($combo, sub {
-        my %la = map { ($_ => 1) } $combo->GetStrings();
-        if(%la ~~ %Core::PluginManager::dplugins) {
-            Wx::Event::Skip($_[1]);
-            return;
-        }
-        $combo->Clear();
-        foreach (keys %Core::PluginManager::dplugins) {
-            $combo->Append($_);
-        }
+        update_list($combo);
         Wx::Event::Skip($_[1]);
     });
 
     return $self;
+}
+
+sub update_list {
+    my $combo = shift;
+    my %la = map { ($_ => 1) } $combo->GetStrings();
+    if(smatch(\%la, \%Core::PluginManager::dplugins)) { return }
+    $combo->Clear();
+    foreach (keys %Core::PluginManager::dplugins) {
+        $combo->Append($_);
+    }
+}
+
+# apparently ~~ is experimental AND deprecated
+sub smatch {
+    my ($b, $a) = @_;
+    foreach (keys %{$a}) {
+        unless($b->{$_}) { return undef }
+    }
+    1;
 }
 
 1;
