@@ -41,6 +41,7 @@ sub new {
         } elsif($text ne '') {
             $tf->SetValue('');
         }
+	Wx::Event::Skip($_[1]);
     };
     Wx::Event::EVT_TEXT_ENTER($combo, -1, $cb);
     Wx::Event::EVT_KILL_FOCUS($combo, $cb);
@@ -54,10 +55,16 @@ sub new {
     });
 
     Wx::Event::EVT_SET_FOCUS($combo, sub {
+        my %la = map { ($_ => 1) } $combo->GetStrings();
+        if(%la ~~ %Core::PluginManager::dplugins) {
+            Wx::Event::Skip($_[1]);
+            return;
+        }
         $combo->Clear();
         foreach (keys %Core::PluginManager::dplugins) {
             $combo->Append($_);
         }
+        Wx::Event::Skip($_[1]);
     });
 
     return $self;

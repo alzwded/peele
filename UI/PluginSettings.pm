@@ -40,7 +40,7 @@ sub new {
             my $f = UI::Components::PluginConfig::editor_dialog('Edit...', \$value);
             if($f->ShowModal() == &Wx::wxID_OK) {
                 $model->{pluginPath}[$idx] = $value;
-                PluginManager::load($value);
+                Core::PluginManager::load($value);
                 $f->Destroy();
                 return $value;
             } else {
