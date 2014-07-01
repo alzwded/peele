@@ -256,8 +256,10 @@ sub compute_stats {
         my $my = $dahash->{nmeth}->{$key} - $dahash->{nvirt}->{$key};
         foreach (@siblings) {
             my $his = $dahash->{nmeth}->{$_} - $dahash->{nvirt}->{$_};
-            $smallSum += abs $my - $his;
+            $smallSum += $my + $his;
+            print "<delta $his $my> $smallSum " if defined $verbose;
         }
+        print Dumper @siblings if defined $verbose;
         my $delta = $smallSum / scalar(@siblings);
         $ndeltasum += $delta;
     }
