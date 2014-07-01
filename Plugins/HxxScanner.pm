@@ -154,8 +154,6 @@ sub accumulate_data {
             nmeth => {},
         };
 
-        use Data::Dumper;
-        print Dumper $files;
         parse_tree_rec($tree, $dir, $gitcmd, $dahash, $files);
 
         my %stats = %{ compute_stats($dahash) };
@@ -227,10 +225,13 @@ sub compute_stats {
 
     # compute mean hdepth
     $sum = 0;
+    print "inher<<\n" if defined $verbose;
     foreach (%{ $dahash->{inher} }) {
         my $current = $_;
         my $h = 0;
-        while(defined $dahash->{inher}->{$current} && $dahash->{inher}->{$current} ne '') {
+        while(defined $dahash->{inher}->{$current} && $dahash->{inher}->{$current} ne ''
+        ) {
+            print " "x$h . ":$current<-" . $dahash->{inher}->{$current} . "\n" if defined $verbose;
             ++$h;
             $current = $dahash->{inher}->{$current};
         }
@@ -313,8 +314,10 @@ sub parse_file {
                 splice @chars, 0, (length($ws) + length($Rparent));
 
                 $dahash->{inher}->{$Rclass} = $Rparent;
-                unless(defined $dahash->{$Rparent}) {
+                print "  PARSE: in inheritance: base $Rclass parent $Rparent\n" if defined $verbose;
+                unless(defined $dahash->{inher}->{$Rparent}) {
                     $dahash->{inher}->{$Rparent} = '';
+                    print "  PARSE: in inheritance: overwritiing $Rparent\n" if defined $verbose;
                 }
                 $dahash->{nvirt}->{$Rclass} = 0;
                 $dahash->{nmeth}->{$Rclass} = 0;
