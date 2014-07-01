@@ -6,7 +6,7 @@ use warnings;
 use File::Spec;
 use Cwd;
 
-my $verbose = 1;#undef;
+my $verbose = undef;
 
 sub new {
     my ($class, $cfg) = @_;
