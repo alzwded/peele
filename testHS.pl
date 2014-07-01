@@ -9,7 +9,9 @@ use strict;
 # NOTE: use http://github.com/alzwded/etc/tree/master/shellOneLiners/buildrepo.pl
 #       to build a maintainable test repo without much hassle
 
-my @files = glob "/mnt/Data/Dropbox/thesis/app/repoBuilder/repo/ComponentA/*.hxx";
+my @files = glob "scenarios/scen3data/repo/";
+
+print Dumper @files;
 
 my $f = HxxScanner->new({});
 my $r = $f->apply({

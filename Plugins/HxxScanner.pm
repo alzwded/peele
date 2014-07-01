@@ -68,7 +68,11 @@ sub get_root_tree {
 
     my ($volume, $dirs, $filename) = File::Spec->splitpath($file, 0);
 
-    return find_root_tree_rec(File::Spec->catdir(($volume, $dirs)));
+    if(-d $file) {
+        return find_root_tree_rec(File::Spec->catdir(($volume, $dirs, $filename)));
+    } else {
+        return find_root_tree_rec(File::Spec->catdir(($volume, $dirs)));
+    }
 }
 
 sub find_root_tree_rec {
@@ -150,6 +154,8 @@ sub accumulate_data {
             nmeth => {},
         };
 
+        use Data::Dumper;
+        print Dumper $files;
         parse_tree_rec($tree, $dir, $gitcmd, $dahash, $files);
 
         my %stats = %{ compute_stats($dahash) };
@@ -184,7 +190,13 @@ sub parse_tree_rec {
             next;
         }
 
-        if(grep { Cwd::realpath("$dir/$filename") eq Cwd::realpath($_) } @{ $files }) {
+        my $leSame = sub {
+            my ($path, $pat) = @_;
+            $pat = quotemeta $pat;
+            if($path =~ m/.*$pat.*/) { return 1 }
+            return 0;
+        };
+        if(grep { &{ $leSame }(Cwd::realpath("$dir/$filename"), Cwd::realpath($_)) } @{ $files }) {
             my $lines = `$gitcmd $sha`;
             if($? != 0) {
                 print "git cat-file failed, last instance\n";
